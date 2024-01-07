@@ -18,7 +18,7 @@ public class SubjectService {
     }
 
     public boolean join(String userId, String name) {
-        Optional<Subject> optionalSubject = subjectRepository.findSubject(userId, name);
+        Optional<Subject> optionalSubject = subjectRepository.findByNameAndUserId(name, userId);
         if (optionalSubject.isPresent()) {
             return false;
         }
@@ -32,11 +32,11 @@ public class SubjectService {
     }
 
     public List<Subject> findSubjectsByUserId(String userId) {
-        return subjectRepository.findSubjectsByUserId(userId);
+        return subjectRepository.findByUserId(userId);
     }
 
     public int delete(String userId, String subjectName) {
-        subjectRepository.delete(userId, subjectName);
+        subjectRepository.deleteByUserIdAndName(userId, subjectName);
         subjectRepository.deleteChapters(userId, subjectName);
         return subjectRepository.deleteItems(userId, subjectName);
     }

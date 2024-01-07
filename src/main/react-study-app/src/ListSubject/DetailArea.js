@@ -19,17 +19,17 @@ const LineProgressbar = styled.progress`
     // background-color:rgb(139, 123, 244);
     width:70px;
 `;
-function DetailArea({ subjectIndex, list, changeList, userId}) {
+function DetailArea({ subjectIndex, list, changeList, userId }) {
     const subject = list.subjects[subjectIndex];
     const chapters = list.subjects[subjectIndex].chapters;
+    const [chapterInput, setChapterInput] = React.useState("");
+    const [itemInput, setItemInput] = React.useState([]);
     const onClickShowingItems = (chapterIndex) => {
         const updatedList = new Subjects();
         updatedList.subjects = [...list.subjects];
         updatedList.convertShowingItems(subjectIndex, chapterIndex);
         changeList(updatedList);
     }
-    const [chapterInput, setChapterInput] = React.useState("");
-    const [itemInput, setItemInput] = React.useState([]);
     const onChangechapterInput = (event) => {
         setChapterInput(event.target.value);
     };
@@ -43,9 +43,10 @@ function DetailArea({ subjectIndex, list, changeList, userId}) {
         event.preventDefault();
         if (chapterInput === "") return;
         axios.post('/api/chapters/create', {
-            userId:userId,
-            subjectName:list.subjects[subjectIndex].name,
-            chapterName:chapterInput})
+            userId: userId,
+            subjectName: list.subjects[subjectIndex].name,
+            chapterName: chapterInput
+        })
         const updatedList = new Subjects();
         updatedList.subjects = [...list.subjects];
         updatedList.addChapter(subjectIndex, chapterInput);
@@ -56,11 +57,11 @@ function DetailArea({ subjectIndex, list, changeList, userId}) {
     const onSubmitItemInput = (event, chapterIndex) => {
         event.preventDefault();
         if (itemInput[chapterIndex] === undefined) return;
-        axios.post('/api/items/create',{
-            userId:userId,
-            subjectName:list.subjects[subjectIndex].name,
-            chapterName:list.subjects[subjectIndex].chapters[chapterIndex].name,
-            itemName:itemInput[chapterIndex]
+        axios.post('/api/items/create', {
+            userId: userId,
+            subjectName: list.subjects[subjectIndex].name,
+            chapterName: list.subjects[subjectIndex].chapters[chapterIndex].name,
+            itemName: itemInput[chapterIndex]
         })
         const updatedList = new Subjects();
         updatedList.subjects = [...list.subjects];
@@ -70,27 +71,23 @@ function DetailArea({ subjectIndex, list, changeList, userId}) {
         setItemInput("");
     }
     const onClickDeleteChapter = (chapterIndex) => {
-        const subjectName = list.subjects[subjectIndex].name;
-        const chapterName = list.subjects[subjectIndex].chapters[chapterIndex].name;
-        axios.post('/api/chapters/delete',{
-            userId:userId,
-            subjectName:subjectName,
-            chapterName:chapterName,
+        axios.post('/api/chapters/delete', {
+            userId: userId,
+            subjectName: subject.name,
+            chapterName: chapters[chapterIndex].name,
         });
         const updatedList = new Subjects();
         updatedList.subjects = [...list.subjects];
         updatedList.deleteChapter(subjectIndex, chapterIndex);
+        updatedList.setTotalProgressPercent(subjectIndex);
         changeList(updatedList);
     }
     const onClickDeleteItem = (chapterIndex, itemIndex) => {
-        const subjectName = list.subjects[subjectIndex].name;
-        const chapterName = list.subjects[subjectIndex].chapters[chapterIndex].name;
-        const itemName = list.subjects[subjectIndex].chapters[chapterIndex].items[itemIndex].name;
-        axios.post('/api/items/delete',{
-            userId:userId,
-            subjectName:subjectName,
-            chapterName:chapterName,
-            itemName:itemName,
+        axios.post('/api/items/delete', {
+            userId: userId,
+            subjectName: subject.name,
+            chapterName: chapters[chapterIndex].name,
+            itemName: chapters[chapterIndex].items[itemIndex].name,
         });
         const updatedList = new Subjects();
         updatedList.subjects = [...list.subjects];
@@ -100,46 +97,39 @@ function DetailArea({ subjectIndex, list, changeList, userId}) {
         changeList(updatedList);
     }
     const onClickChapterChecked = (chapterIndex) => {
-        const subjectName = list.subjects[subjectIndex].name;
-        const chapterName = list.subjects[subjectIndex].chapters[chapterIndex].name;
-        const checked = list.subjects[subjectIndex].chapters[chapterIndex].checked;
-        axios.post('/api/chapters/updateCheck',{
-            userId:userId,
-            subjectName:subjectName,
-            chapterName:chapterName,
-            checked:!checked
+        axios.post('/api/chapters/updateCheck', {
+            userId: userId,
+            subjectName: subject.name,
+            chapterName: chapters[chapterIndex].name,
+            checked: !chapters[chapterIndex].checked,
         });
         const updatedList = new Subjects();
         updatedList.subjects = [...list.subjects];
-        if (updatedList.subjects[subjectIndex].chapters[chapterIndex].progressPercent === 100) {
-            updatedList.subjects[subjectIndex].chapters[chapterIndex].items.map((item, itemIndex) => {
+        const updatedChapter = updatedList.subjects[subjectIndex].chapters[chapterIndex];
+        if (updatedChapter.progressPercent === 100) {
+            updatedChapter.items.map((item, itemIndex) => {
                 item.checked = false;
                 return item;
             })
-            updatedList.subjects[subjectIndex].chapters[chapterIndex].checked = false;
-        }
-        else {
-            updatedList.subjects[subjectIndex].chapters[chapterIndex].items.map((item, itemIndex) => {
+            updatedChapter.checked = false;
+        } else {
+            updatedChapter.items.map((item, itemIndex) => {
                 item.checked = true;
                 return item;
             })
-            updatedList.subjects[subjectIndex].chapters[chapterIndex].checked = true;
+            updatedChapter.checked = true;
         }
         updatedList.setChapterProgressPercent(subjectIndex, chapterIndex);
         updatedList.setTotalProgressPercent(subjectIndex);
         changeList(updatedList);
     }
     const onClickItemChecked = (chapterIndex, itemIndex) => {
-        const subjectName = list.subjects[subjectIndex].name;
-        const chapterName = list.subjects[subjectIndex].chapters[chapterIndex].name;
-        const itemName = list.subjects[subjectIndex].chapters[chapterIndex].items[itemIndex].name;
-        const checked = list.subjects[subjectIndex].chapters[chapterIndex].items[itemIndex].checked;
-        axios.post('/api/items/updateCheck',{
-            userId:userId,
-            subjectName:subjectName,
-            chapterName:chapterName,
-            itemName:itemName,
-            checked:!checked
+        axios.post('/api/items/updateCheck', {
+            userId: userId,
+            subjectName: subject.name,
+            chapterName: chapters[chapterIndex].name,
+            itemName: chapters[chapterIndex].items[itemIndex].name,
+            checked: !chapters[chapterIndex].items[itemIndex].checked,
         });
         const updatedList = new Subjects();
         updatedList.subjects = [...list.subjects];

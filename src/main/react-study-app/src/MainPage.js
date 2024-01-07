@@ -6,7 +6,7 @@ import Timetable from './timeTable/timeTable';
 import Blog from './blog/blog';
 import Logo from './Logo.png';
 import { useLocation } from 'react-router-dom';
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const HeaderContainer = styled.span`
@@ -33,26 +33,24 @@ const MenuContainer = styled.div`
 `;
 function MainPage() {
   const [pageID, setPageID] = React.useState("1");
-  const onChangePageID = (id) => {
-    setPageID(id);
-  };
-  const {state} = useLocation();
-
-
+  const onChangePageID = (id) => {setPageID(id);};
+  const { state } = useLocation();
   return (
-    <div style={{  height: "100vh" }}>
+    <div style={{ height: "100vh" }}>
       <HeaderContainer>
-        <img src={Logo} alt="logo" width="100" style={{marginLeft:"30%"}}></img>
+        <img src={Logo} alt="logo" width="100" style={{ marginLeft: "30%" }}></img>
         <MenuContainer>
-          <MenuBtn onClick={()=>onChangePageID("1")}>진도 관리</MenuBtn>
-          <MenuBtn onClick={()=>onChangePageID("2")}>과제 관리</MenuBtn>
-          <MenuBtn onClick={()=>onChangePageID("3")}>시간표</MenuBtn>
-          <MenuBtn onClick={()=>onChangePageID("4")}>캘린더</MenuBtn>
-          <MenuBtn onClick={()=>onChangePageID("5")}>블로그</MenuBtn>
+          <MenuBtn onClick={() => onChangePageID("1")}>진도 관리</MenuBtn>
+          <MenuBtn onClick={() => onChangePageID("2")}>과제 관리</MenuBtn>
+          <MenuBtn onClick={() => onChangePageID("3")}>시간표</MenuBtn>
+          <MenuBtn onClick={() => onChangePageID("4")}>캘린더</MenuBtn>
+          <MenuBtn onClick={() => onChangePageID("5")}>블로그</MenuBtn>
         </MenuContainer>
         <div>
           <p>{state}님</p>
           <button type="button"><Link to="/">로그아웃</Link></button>
+          <button>비밀번호 변경</button>
+          <button>회원 탈퇴</button>
         </div>
       </HeaderContainer>
       <hr />

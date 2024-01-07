@@ -25,7 +25,7 @@ public class ChapterService {
     }
 
     public List<Chapter> findChaptersByUserId(String userId, String subjectName) {
-        return chapterRepository.findChaptersByUserId(userId, subjectName);
+        return chapterRepository.findByUserIdAndSubjectName(userId, subjectName);
     }
 
     public int updateChecked(String userId, String subjectName, String chapterName, boolean checked) {
@@ -33,7 +33,7 @@ public class ChapterService {
     }
 
     public int delete(String userId, String subjectName, String chapterName) {
-        chapterRepository.delete(userId, subjectName, chapterName);
+        chapterRepository.deleteByUserIdAndSubjectNameAndChapterName(userId, subjectName, chapterName);
         return chapterRepository.deleteItems(userId, subjectName, chapterName);
     }
 }

@@ -11,8 +11,9 @@ import java.util.List;
 
 public interface ChapterRepository extends JpaRepository<Chapter, Long> {
 
-    @Query("SELECT c FROM Chapter c WHERE c.userId= :userId and c.subjectName=:subjectName")
-    List<Chapter> findChaptersByUserId(String userId, String subjectName);
+    //    @Query("SELECT c FROM Chapter c WHERE c.userId= :userId and c.subjectName=:subjectName")
+//    List<Chapter> findChaptersByUserId(String userId, String subjectName);
+    List<Chapter> findByUserIdAndSubjectName(String userId, String subjectName);
 
     @Transactional
     @Modifying
@@ -22,8 +23,9 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
 
     @Transactional
     @Modifying
-    @Query("DELETE Chapter c WHERE c.userId=:userId and c.subjectName=:subjectName and c.chapterName=:chapterName ")
-    int delete(String userId, String subjectName, String chapterName);
+    int deleteByUserIdAndSubjectNameAndChapterName(String userId, String subjectName, String chapterName);
+//    @Query("DELETE Chapter c WHERE c.userId=:userId and c.subjectName=:subjectName and c.chapterName=:chapterName ")
+//    int delete(String userId, String subjectName, String chapterName);
 
     @Transactional
     @Modifying

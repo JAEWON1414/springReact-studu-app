@@ -38,7 +38,7 @@ const AreaOverview = styled.ul`
     grid-row-gap: 20px;
     grid-auto-rows: 180px;
     width: min(calc(100% - 300px), 70%);`;
-function OverviewArea({ list, changeList, changeShowingIndex , userId}) {
+function OverviewArea({ list, changeList, showingIndex, changeShowingIndex, userId }) {
     const CircularProgressBar = ({ percentage }) => {
         return (
             <div style={{ width: '90px', margin: 'auto' }}>
@@ -57,18 +57,15 @@ function OverviewArea({ list, changeList, changeShowingIndex , userId}) {
     };
 
     const onClickDeleteSubject = (index) => {
-        changeList(prevList => {
-            axios.post('/api/subjects/delete', {
-                userId:userId,
-                name:list.subjects[index].name,
-            });
-            if (index === list.subjects.length - 1) changeShowingIndex(-1);
-            const updatedList = new Subjects();
-            updatedList.subjects = [...prevList.subjects];
-            updatedList.deleteSubject(index);
-
-            return updatedList;
-        })
+        axios.post('/api/subjects/delete', {
+            userId: userId,
+            name: list.subjects[index].name,
+        });
+        if (index <= showingIndex) changeShowingIndex(showingIndex - 1);
+        const updatedList = new Subjects();
+        updatedList.subjects = [...list.subjects];
+        updatedList.deleteSubject(index);
+        changeList(updatedList);
     }
     const onClickShowing = (index) => {
         changeShowingIndex(index);
@@ -81,10 +78,7 @@ function OverviewArea({ list, changeList, changeShowingIndex , userId}) {
                         <SubjectHeader>
                             <SubjectName onClick={() => onClickShowing(index)}> {index + 1 + ". " + subject.name}</ SubjectName>
                             <span>
-                                <SubjectEdit>
-                                    <FiEdit size="20" />
-                                    {/* <Modal123 subjectIndex={index} list={list} changeList={changeList}/> */}
-                                </SubjectEdit>
+                                <SubjectEdit> <FiEdit size="20" /> </SubjectEdit>
                                 <SubjectDelete onClick={() => onClickDeleteSubject(index)}><TiDeleteOutline size="24" /></SubjectDelete>
                             </span>
                         </SubjectHeader>

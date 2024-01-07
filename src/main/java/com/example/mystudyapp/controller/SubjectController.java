@@ -36,7 +36,6 @@ public class SubjectController {
     @ResponseBody
     @PostMapping("delete")
     public int delete(@RequestBody final Subject subject) {
-        System.out.println("delete subject = " + subject.getUserId() + " " + subject.getName());
         return subjectService.delete(subject.getUserId(), subject.getName());
     }
 

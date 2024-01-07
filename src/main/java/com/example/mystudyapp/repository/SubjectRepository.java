@@ -10,16 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
-    @Query("SELECT s FROM Subject s WHERE s.userId= :userId and s.name =:name")
-    Optional<Subject> findSubject(String userId, String name);
+    Optional<Subject> findByNameAndUserId(String name, String userId);
 
-    @Query("SELECT s FROM Subject s WHERE s.userId= :userId")
-    List<Subject> findSubjectsByUserId(String userId);
+    List<Subject> findByUserId(String userId);
 
     @Transactional
     @Modifying
-    @Query("DELETE Subject s WHERE s.userId=:userId and s.name=:subjectName")
-    int delete(String userId, String subjectName);
+    int deleteByUserIdAndName(String userId, String name);
 
     @Transactional
     @Modifying

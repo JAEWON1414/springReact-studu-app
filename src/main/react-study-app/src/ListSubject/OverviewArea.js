@@ -47,7 +47,7 @@ function OverviewArea({ list, changeList, showingIndex, changeShowingIndex, user
                     text={`${percentage}%`}
                     styles={buildStyles({
                         textColor: 'black',
-                        pathColor: 'rgb(139, 123, 244);',
+                        pathColor: 'rgb(139, 123, 244)',
                         trailColor: '#d6d6d6',
                         height: '30%',
                     })}

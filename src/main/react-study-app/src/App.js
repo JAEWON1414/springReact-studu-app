@@ -13,9 +13,9 @@ function App() {
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <Routes>
-        <Route path="/MainPage"
-        element={<MainPage/>}/>
         <Route path="/"
+        element={<MainPage/>}/>
+        <Route path="/login"
         element={<LoginPage/>}/>
         <Route path="/SignUp"
         element={<SignUp/>}/>

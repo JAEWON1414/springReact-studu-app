@@ -4,9 +4,10 @@ const SubjectInput = styled.input`
     background-color:white;
     border:none;
     outline: none;
-    border-radius:10px;
+    border-radius:5px;
     padding:5px;
-    border-bottom: 4px solid rgb(139, 123, 244);
+    border:1px solid rgba(88,89,103,0.5);
+    font-family: "kim-jung-chul-myungjo", sans-serif;
 `;
 const SubjectName = styled.button`
     margin-top:0px;
@@ -14,6 +15,7 @@ const SubjectName = styled.button`
     height:100%;
     border:none;
     background-color:rgba(139, 123, 244,0.2);
+    font-family: "kim-jung-chul-myungjo", sans-serif;
     border-radius:10px;
     &:hover {
         box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.3);

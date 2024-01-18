@@ -6,11 +6,24 @@ import { SubjectInput } from './StyledComponent';
 import { } from './style.module.css';
 import styled from 'styled-components';
 import axios from "axios";
-
+import { FaPlus } from "react-icons/fa6";
 const AreaContainer = styled.div`
     display:flex;
     justify-content: space-between;
     flex-direction: row;`;
+const SubjectAddBtn = styled.button`
+    margin-left:12%;
+    color:rgb(89,88,103);
+    border:none;
+    width:20px;
+    height:20px;
+    margin-right:5px;
+`;
+const SubjectAddForm = styled.form`
+    margin-top:10px;
+    height:20px;
+`;
+
 function ListSubject({ userId }) {
     const [subject, setSubject] = React.useState("");
     const [list, setList] = React.useState(new Subjects());
@@ -83,13 +96,15 @@ function ListSubject({ userId }) {
     };
     React.useEffect(() => {
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
         <div>
-            <form onSubmit={onSubmitSubject}>
-                <SubjectInput style={{ marginLeft: "28%" }} type="Text"
-                    value={subject} placeholder="과목 이름 추가하기" onChange={onChangeSubject} />
-            </form>
+            <SubjectAddForm onSubmit={onSubmitSubject}>
+                <SubjectAddBtn><FaPlus></FaPlus></SubjectAddBtn>
+                <SubjectInput style={{width:"150px"}}type="Text"
+                    value={subject} placeholder="과목명" onChange={onChangeSubject} />
+            </SubjectAddForm>
             <AreaContainer>
                 <OverviewArea list={list} changeList={changeList} showingIndex={showingIndex} changeShowingIndex={onChangeShowingIndex} userId={userId} />
                 {showingIndex !== -1 ?

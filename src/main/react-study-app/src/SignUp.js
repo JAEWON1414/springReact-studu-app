@@ -2,6 +2,9 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import styled from 'styled-components';
+import { UserBodyWrapper, Logo, UserContainerWrapper, UserContainer, UserForm , UserInput, UserButton} from './LoginPage';
+
 function SignUp() {
     const navigate = useNavigate();
     const [userId, setUserId] = React.useState("");
@@ -25,15 +28,21 @@ function SignUp() {
         })
     }
     return (
-        <div>
-            <form onSubmit={onSubmitUserId}>
-                <label>아이디</label>
-                <input type="Text" placeholder='아이디를 입력하세요' value={userId} onChange={onChangeUserId} />
-                <label>비밀번호</label>
-                <input type="password" placeholder='비밀버호를 입력하세요' value={userPw} onChange={onChangeUserPw} />
-                <button type="submit">회원가입</button>
-            </form>
-        </div>
+        <UserBodyWrapper>
+            <Logo onClick={()=>navigate('/')}>로고</Logo>
+            <UserContainerWrapper>
+                <UserContainer>
+                    <UserForm onSubmit={onSubmitUserId}>
+                        
+                        <UserInput type="Text" placeholder='아이디를 입력하세요' value={userId} onChange={onChangeUserId} />
+                        
+                        <UserInput type="password" placeholder='비밀버호를 입력하세요' value={userPw} onChange={onChangeUserPw} />
+                        <UserButton type="submit">회원가입</UserButton>
+                    </UserForm>
+                </UserContainer>
+            </UserContainerWrapper>
+            <div styled={{ height: "100px" }}></div>
+        </UserBodyWrapper>
     )
 }
 

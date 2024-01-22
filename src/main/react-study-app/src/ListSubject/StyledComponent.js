@@ -11,15 +11,16 @@ const SubjectInput = styled.input`
 `;
 const SubjectName = styled.button`
     margin-top:0px;
-    width:90px;
+    width:120px;
     height:100%;
     border:none;
-    background-color:rgba(139, 123, 244,0.2);
+    background-color:rgb(195,194,213);
     font-family: "kim-jung-chul-myungjo", sans-serif;
-    border-radius:10px;
-    &:hover {
-        box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.3);
-      }
+    font-size:17px;
+    border-radius:13px;
+    // &:hover {
+    //     box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.3);
+    //   }
 `;
 const SubjectDelete = styled.button`
     margin-top:0px;

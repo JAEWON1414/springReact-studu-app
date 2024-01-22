@@ -27,4 +27,9 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
     @Modifying
     @Query("DELETE Item i WHERE i.userId=:userId and i.subjectName=:subjectName")
     int deleteItems(String userId, String subjectName);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Subject s set s.name=:newName WHERE s.userId=:userId and s.name=:name")
+    void update(String userId, String name, String newName);
 }

@@ -10,11 +10,37 @@ import axios from "axios";
 
 
 const AreaDetail = styled.div`
-    background-color: rgb(167, 155, 243);
-    width :300px;
-    border:10px solid rgb(167, 155, 243);
-    border-radius:25px;
+    // background-color: rgb(195,194,213);
+    width :850px;
+    margin-left:30px;
+    // border:10px solid rgb(195,194,213);
+    // border-radius:25px;
 `;
+const DetailWraper = styled.div`
+background-color: rgb(195,194,213);
+width :750px;
+border:10px solid rgb(195,194,213);
+border-radius:25px;
+`;
+
+const DetailHeader = styled.div`
+    display:flex;
+    justify-content:center;
+    flex-direction:row;
+    margin-bottom:20px;
+    font-family: "kim-jung-chul-myungjo", sans-serif;
+    font-size:25px;
+    font-weight:900;
+`;
+
+const DetailBody = styled.div`
+    display:flex;
+    justify-content:space-around;
+    flex-direction:row;
+    width:84%;
+    margin-left:8%;
+`;
+
 const LineProgressbar = styled.progress`
     // background-color:rgb(139, 123, 244);
     width:70px;
@@ -141,40 +167,53 @@ function DetailArea({ subjectIndex, list, changeList, userId }) {
 
     return (subject !== undefined && (
         <AreaDetail>
-            <h2>{subject.name} ({subject.progressPercent}%)</h2>
-            <form onSubmit={onSubmitChapterInput}>
-                <SubjectInput
-                    type="text"
-                    placeholder='Write name'
-                    value={chapterInput}
-                    onChange={onChangechapterInput} />
-            </form>
-            <ul>{chapters.map((chapter, chapterIndex) => (
-                <li key={chapterIndex}>
-                    <span style={{ height: "100px" }}>
-                        <SubjectName>{chapterIndex + 1 + ". " + chapter.name} ({chapter.progressPercent}%) <LineProgressbar value={chapter.progressPercent} max="100"></LineProgressbar></SubjectName>
-                        <SubjectToggle onClick={() => onClickShowingItems(chapterIndex)}>{chapter.showingItems ? <IoIosArrowDropleft size="24" /> : <IoIosArrowDropdown size="24" />}</SubjectToggle>
-                        <SubjectCheckbox onClick={() => onClickChapterChecked(chapterIndex)}>{chapter.progressPercent === 100 ? <MdOutlineCheckBox size="24" /> : <MdCheckBoxOutlineBlank size="24" />}</SubjectCheckbox>
-                        <SubjectDelete onClick={() => onClickDeleteChapter(chapterIndex)}><TiDeleteOutline size="24" /></SubjectDelete>
-                    </span>
-                    {chapter.showingItems ?
-                        <form onSubmit={(event) => onSubmitItemInput(event, chapterIndex)}>
-                            <SubjectInput type="Text"
-                                placeholder='Write Item'
-                                value={itemInput[chapterIndex] || ""}
-                                onChange={(event) => onChangeItemInput(event.target.value, chapterIndex)} />
-                        </form> : null}
-                    <ul>{chapter.items.map((item, itemIndex) => (chapter.showingItems &&
-                        <li key={itemIndex}>
-                            <SubjectName>{chapterIndex + 1}-{itemIndex + 1}. {item.name}</SubjectName>
-                            <SubjectCheckbox onClick={() => onClickItemChecked(chapterIndex, itemIndex)}>{item.checked ? <MdOutlineCheckBox size="24" /> : <MdCheckBoxOutlineBlank size="24" />}</SubjectCheckbox>
-                            <SubjectDelete onClick={() => onClickDeleteItem(chapterIndex, itemIndex)}><TiDeleteOutline size="24" /></SubjectDelete>
-                        </li>
-                    ))}
-                    </ul>
-                </li>
-            ))}
-            </ul>
+            <DetailWraper>
+
+                <DetailHeader>{subject.name} ({subject.progressPercent}%)</DetailHeader>
+
+                <DetailBody>
+                    <div style={{width:"42%"}}>
+                        진도관리
+                        <form onSubmit={onSubmitChapterInput}>
+                            <SubjectInput
+                                type="text"
+                                placeholder='Write name'
+                                value={chapterInput}
+                                onChange={onChangechapterInput} />
+                        </form>
+                        <ul>{chapters.map((chapter, chapterIndex) => (
+                            <li key={chapterIndex}>
+                                <span style={{ height: "100px" }}>
+                                    <SubjectName>{chapterIndex + 1 + ". " + chapter.name} ({chapter.progressPercent}%) <LineProgressbar value={chapter.progressPercent} max="100"></LineProgressbar></SubjectName>
+                                    <SubjectToggle onClick={() => onClickShowingItems(chapterIndex)}>{chapter.showingItems ? <IoIosArrowDropleft size="24" /> : <IoIosArrowDropdown size="24" />}</SubjectToggle>
+                                    <SubjectCheckbox onClick={() => onClickChapterChecked(chapterIndex)}>{chapter.progressPercent === 100 ? <MdOutlineCheckBox size="24" /> : <MdCheckBoxOutlineBlank size="24" />}</SubjectCheckbox>
+                                    <SubjectDelete onClick={() => onClickDeleteChapter(chapterIndex)}><TiDeleteOutline size="24" /></SubjectDelete>
+                                </span>
+                                {chapter.showingItems ?
+                                    <form onSubmit={(event) => onSubmitItemInput(event, chapterIndex)}>
+                                        <SubjectInput type="Text"
+                                            placeholder='Write Item'
+                                            value={itemInput[chapterIndex] || ""}
+                                            onChange={(event) => onChangeItemInput(event.target.value, chapterIndex)} />
+                                    </form> : null}
+                                <ul>{chapter.items.map((item, itemIndex) => (chapter.showingItems &&
+                                    <li key={itemIndex}>
+                                        <SubjectName>{chapterIndex + 1}-{itemIndex + 1}. {item.name}</SubjectName>
+                                        <SubjectCheckbox onClick={() => onClickItemChecked(chapterIndex, itemIndex)}>{item.checked ? <MdOutlineCheckBox size="24" /> : <MdCheckBoxOutlineBlank size="24" />}</SubjectCheckbox>
+                                        <SubjectDelete onClick={() => onClickDeleteItem(chapterIndex, itemIndex)}><TiDeleteOutline size="24" /></SubjectDelete>
+                                    </li>
+                                ))}
+                                </ul>
+                            </li>
+                        ))}
+                        </ul>
+                    </div>
+                    <div style={{width:"42%",borderLeft:"2px solid", paddingLeft:"20px"}}>
+                        과제관리
+
+                    </div>
+                </DetailBody>
+            </DetailWraper>
         </AreaDetail>)
     );
 }

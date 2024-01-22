@@ -10,7 +10,10 @@ import { FaPlus } from "react-icons/fa6";
 const AreaContainer = styled.div`
     display:flex;
     justify-content: space-between;
-    flex-direction: row;`;
+    flex-direction: row;
+    width:80%;
+    margin-left:10%;
+    `;
 const SubjectAddBtn = styled.button`
     margin-left:12%;
     color:rgb(89,88,103);

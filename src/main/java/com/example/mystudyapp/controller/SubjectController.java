@@ -39,4 +39,10 @@ public class SubjectController {
         return subjectService.delete(subject.getUserId(), subject.getName());
     }
 
+    @ResponseBody
+    @PostMapping("update")
+    public void update(@RequestBody final SubjectEditDTO subjectEditDTO){
+        subjectService.update(subjectEditDTO);
+    }
+
 }

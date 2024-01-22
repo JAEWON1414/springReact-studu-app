@@ -1,5 +1,6 @@
 package com.example.mystudyapp.service;
 
+import com.example.mystudyapp.controller.SubjectEditDTO;
 import com.example.mystudyapp.domain.Subject;
 import com.example.mystudyapp.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,9 @@ public class SubjectService {
         subjectRepository.deleteByUserIdAndName(userId, subjectName);
         subjectRepository.deleteChapters(userId, subjectName);
         return subjectRepository.deleteItems(userId, subjectName);
+    }
+
+    public void update(SubjectEditDTO subjectEditDTO){
+        subjectRepository.update(subjectEditDTO.getUserId(), subjectEditDTO.getName(), subjectEditDTO.getNewName());
     }
 }

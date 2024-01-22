@@ -26,8 +26,8 @@ const MenuBtn = styled.button`
   //   text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
   //   font-weight: 900;
   // }
-  ${({ isOpen }) =>
-    isOpen &&
+  ${({ $isOpen }) =>
+    $isOpen &&
     css`
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
         font-weight: 900;
@@ -37,7 +37,7 @@ const MenuContainer = styled.div`
   display:flex;
   flex-direction: row;
   justify-content: space-around;
-  // width:35%;
+  width:80%;
   height:40px;
   margin-left:10%;
 `;
@@ -68,7 +68,7 @@ const SignUp = styled.button`
   `;
 
 const ProfileMenu = styled.div`
-  display: ${(props) => (props.isOpen ? 'flex' : 'none')};
+  display: ${props => props.$isOpen ? 'flex' : 'none'};
   flex-direction: column;
   justify-content: space-around;
   top:88px;
@@ -162,7 +162,7 @@ function MainPage() {
             {userId !== null ? <ProfileContainer onClick={onClickProfile}>
               <CgProfile size="30" style={{marginRight:"10px"}}/>
               <ProfileBtn>{userId}</ProfileBtn>
-              <ProfileMenu isOpen={isOpenMenu}>
+              <ProfileMenu $isOpen={isOpenMenu}>
                 <ProfileMenuBtnWrapper><ProfileMenuBtn onClick={onClickLogout} style={{borderBottom:"1px solid rgb(195,195,213)"}}>로그아웃</ProfileMenuBtn></ProfileMenuBtnWrapper>
                 <ProfileMenuBtnWrapper><ProfileMenuBtn style={{borderBottom:"1px solid rgb(195,195,213)"}}>비밀번호 변경</ProfileMenuBtn></ProfileMenuBtnWrapper>
                 <ProfileMenuBtnWrapper><ProfileMenuBtn>회원탈퇴</ProfileMenuBtn></ProfileMenuBtnWrapper>
@@ -174,11 +174,11 @@ function MainPage() {
           </span>
         </HeaderContainer>
         <MenuContainer>
-          <MenuBtn onClick={() => onChangePageID("1")} isOpen={pageID==="1"}>진도 관리</MenuBtn>
-          <MenuBtn onClick={() => onChangePageID("2")} isOpen={pageID==="2"}>과제 관리</MenuBtn>
-          <MenuBtn onClick={() => onChangePageID("3")} isOpen={pageID==="3"}>시간표</MenuBtn>
-          <MenuBtn onClick={() => onChangePageID("4")} isOpen={pageID==="4"}>캘린더</MenuBtn>
-          <MenuBtn onClick={() => onChangePageID("5")} isOpen={pageID==="5"}>블로그</MenuBtn>
+          <MenuBtn onClick={() => onChangePageID("1")} $isOpen={pageID==="1"}>진도 관리</MenuBtn>
+          {/* <MenuBtn onClick={() => onChangePageID("2")} $isOpen={pageID==="2"}>과제 관리</MenuBtn> */}
+          <MenuBtn onClick={() => onChangePageID("3")} $isOpen={pageID==="3"}>시간표</MenuBtn>
+          <MenuBtn onClick={() => onChangePageID("4")} $isOpen={pageID==="4"}>캘린더</MenuBtn>
+          <MenuBtn onClick={() => onChangePageID("5")} $isOpen={pageID==="5"}>블로그</MenuBtn>
         </MenuContainer>
         <hr style={{marginTop:"0px", marginBottom:"0px"}}/>
         {pageID === "1" ? <ListSubject userId={userId} /> : null}

@@ -1,41 +1,23 @@
 import styled from "styled-components";
 
-const SubjectInput = styled.input`
-    background-color:white;
-    border:none;
-    outline: none;
-    border-radius:5px;
-    padding:5px;
-    border:1px solid rgba(88,89,103,0.5);
-    font-family: "kim-jung-chul-myungjo", sans-serif;
-`;
-const SubjectName = styled.button`
-    margin-top:0px;
-    width:120px;
-    height:100%;
-    border:none;
-    background-color:rgb(195,194,213);
-    font-family: "kim-jung-chul-myungjo", sans-serif;
-    font-size:17px;
-    border-radius:13px;
-    // &:hover {
-    //     box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.3);
-    //   }
+
+const SubjectName = styled.div`
+
+    background-color:inherit;
+    color:${({theme})=>theme.color.black};
+    font-size:19px;
+    font-weight:900;
 `;
 const SubjectDelete = styled.button`
-    margin-top:0px;
     padding:0px;
-    width:25px;
-    height:100%;
-    font-size:30px;
     border:none;
     background-color: inherit;
+    position:relative;
+    top:1px;
+
 `;
 const SubjectEdit = styled.button`
-    margin-top:0px;
-    padding-top:0px;
-    width:25px;
-    height:100%;
+    padding:0px;
     border:none;
     background-color: inherit;
 `;
@@ -43,13 +25,24 @@ const SubjectEdit = styled.button`
 const SubjectCheckbox = styled.button`
     border:none;
     background-color: inherit;
+    display:flex;
+    flex-direction:column;
+    justify-content:start;
+    position:relative;
+    top:-3px;
 `;
 const SubjectToggle = styled.button`
     border:none;
     background-color: inherit;
+    position:relative;
+    bottom:2px;
+    display:flex;
+    flex-direction:column;
+    justify-content:start;
+    margin-left:10px;
 `;
 
 export {
-    SubjectInput, SubjectName, SubjectDelete,
+ SubjectName, SubjectDelete,
     SubjectEdit, SubjectCheckbox, SubjectToggle
 };

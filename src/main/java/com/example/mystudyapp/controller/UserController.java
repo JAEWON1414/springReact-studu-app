@@ -30,5 +30,7 @@ public class UserController {
     public boolean create(@RequestBody final User user) {
         return userService.join(user.getUserId(), user.getUserPw());
     }
+
+
 }
 

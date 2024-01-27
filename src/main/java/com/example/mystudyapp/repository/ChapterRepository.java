@@ -11,8 +11,6 @@ import java.util.List;
 
 public interface ChapterRepository extends JpaRepository<Chapter, Long> {
 
-    //    @Query("SELECT c FROM Chapter c WHERE c.userId= :userId and c.subjectName=:subjectName")
-//    List<Chapter> findChaptersByUserId(String userId, String subjectName);
     List<Chapter> findByUserIdAndSubjectName(String userId, String subjectName);
 
     @Transactional
@@ -32,4 +30,8 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
     @Query("DELETE Item i WHERE i.userId=:userId and i.subjectName=:subjectName and i.chapterName=:chapterName")
     int deleteItems(String userId, String subjectName, String chapterName);
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE Chapter c set c.chapterName=:newName WHERE c.userId=:userId and c.chapterName=:name")
+    void updateName(String userId, String name, String newName);
 }

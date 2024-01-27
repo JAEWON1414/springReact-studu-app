@@ -47,4 +47,7 @@ public class ChapterController {
         System.out.println("delete chapter = " + chapter.getUserId() + " " + chapter.getSubjectName() + " " + chapter.getChapterName());
         return chapterService.delete(chapter.getUserId(), chapter.getSubjectName(), chapter.getChapterName());
     }
+    @ResponseBody
+    @PostMapping("update")
+    public void update(@RequestBody ChapterEditDTO chapterEditDTO) {chapterService.updateName(chapterEditDTO);}
 }

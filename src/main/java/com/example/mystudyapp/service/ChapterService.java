@@ -1,6 +1,7 @@
 package com.example.mystudyapp.service;
 
 
+import com.example.mystudyapp.controller.ChapterEditDTO;
 import com.example.mystudyapp.domain.Chapter;
 import com.example.mystudyapp.repository.ChapterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,9 @@ public class ChapterService {
     public int delete(String userId, String subjectName, String chapterName) {
         chapterRepository.deleteByUserIdAndSubjectNameAndChapterName(userId, subjectName, chapterName);
         return chapterRepository.deleteItems(userId, subjectName, chapterName);
+    }
+
+    public void updateName(ChapterEditDTO chapterEditDTO){
+        chapterRepository.updateName(chapterEditDTO.getUserId(),chapterEditDTO.getName(),chapterEditDTO.getNewName());
     }
 }

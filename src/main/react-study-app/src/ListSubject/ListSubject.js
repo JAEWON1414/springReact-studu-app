@@ -2,35 +2,47 @@ import React from 'react';
 import DetailArea from './DetailArea';
 import Subjects from './Subjects';
 import OverviewArea from './OverviewArea';
-import { SubjectInput } from './StyledComponent';
-import { } from './style.module.css';
 import styled from 'styled-components';
 import axios from "axios";
 import { FaPlus } from "react-icons/fa6";
+
 const AreaContainer = styled.div`
     display:flex;
     justify-content: space-between;
     flex-direction: row;
-    width:80%;
+    // width:80%;
+    margin-right:10%;
     margin-left:10%;
     `;
 const SubjectAddBtn = styled.button`
     margin-left:12%;
     color:rgb(89,88,103);
+    background-color:rgb(240,239,255);
     border:none;
     width:20px;
     height:20px;
     margin-right:5px;
 `;
 const SubjectAddForm = styled.form`
-    margin-top:10px;
+    margin-top:20px;
+    margin-bottom:30px;
     height:20px;
+`;
+
+const SubjectInput = styled.input`
+    background-color:${({ theme }) => theme.color.white};
+    border:none;
+    outline: none;
+    border-radius:5px;
+    padding:5px;
+    border:1px solid rgba(88,89,103,0.5);////////////////////////////////////
+    height:30px;
 `;
 
 function ListSubject({ userId }) {
     const [subject, setSubject] = React.useState("");
     const [list, setList] = React.useState(new Subjects());
-    const [showingIndex, setShowingIndex] = React.useState(-1);
+    const [showingIndex, setShowingIndex] = React.useState(0);
     const onChangeSubject = (event) => {
         setSubject(event.target.value);
     }
@@ -39,22 +51,28 @@ function ListSubject({ userId }) {
     }
     const onSubmitSubject = (event) => {
         event.preventDefault();
-        axios.post('/api/subjects/create', {
-            userId: userId,
-            name: subject
-        })
-            .then((res) => {
-                if (!res.data) {
-                    alert("중복된 과목 이름입니다");
-                }
-            })
         if (subject === "") return;
-        setList(prevList => {
-            const updatedList = new Subjects();
-            updatedList.subjects = [...prevList.subjects];
-            updatedList.addSubject(subject);
-            return updatedList;
-        })
+        else {
+            axios.post('/api/subjects/create', {
+                userId: userId,
+                name: subject
+            })
+                .then((res) => {
+                    if (!res.data) {
+                        alert("중복된 과목 이름입니다");
+                        return;
+                    }
+                    else {
+                        setList(prevList => {
+                            const updatedList = new Subjects();
+                            updatedList.subjects = [...prevList.subjects];
+                            updatedList.addSubject(subject);
+                            return updatedList;
+                        })
+                    }
+                })
+        }
+
         setSubject("");
     }
     const changeList = (updatedList) => {
@@ -90,7 +108,19 @@ function ListSubject({ userId }) {
                     }
                     updatedList.setChapterProgressPercent(subjectIndex, chapterIndex);
                 }
+                
                 updatedList.setTotalProgressPercent(subjectIndex);
+                const taskResponse = await axios.post('/api/tasks',{
+                    userId: userId,
+                    subjectName: subject.name,
+                })
+                const tasksFromServer = taskResponse.data;
+                for(let taskIndex = 0; taskIndex < tasksFromServer.length; taskIndex++){
+                    const task = tasksFromServer[taskIndex];
+                    updatedList.addTask(subjectIndex,task.taskName, task.year, task.month, task.day);
+                    updatedList.subjects[subjectIndex].tasks[taskIndex].checked = task.checked;
+                }
+                updatedList.setTaskPercent(subjectIndex);
             }
             setList(updatedList);
         } catch (error) {
@@ -105,7 +135,7 @@ function ListSubject({ userId }) {
         <div>
             <SubjectAddForm onSubmit={onSubmitSubject}>
                 <SubjectAddBtn><FaPlus></FaPlus></SubjectAddBtn>
-                <SubjectInput style={{width:"150px"}}type="Text"
+                <SubjectInput style={{ width: "150px" }} type="Text"
                     value={subject} placeholder="과목명" onChange={onChangeSubject} />
             </SubjectAddForm>
             <AreaContainer>

@@ -37,4 +37,10 @@ public class TaskController {
         taskService.delete(task);
         return true;
     }
+    @ResponseBody
+    @PostMapping("update")
+    public boolean update(@RequestBody final TaskEditDTO taskEditDTO){
+        taskService.updateName(taskEditDTO);
+        return true;
+    }
 }

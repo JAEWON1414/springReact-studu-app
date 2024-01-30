@@ -32,6 +32,6 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE Chapter c set c.chapterName=:newName WHERE c.userId=:userId and c.chapterName=:name")
-    void updateName(String userId, String name, String newName);
+    @Query("UPDATE Chapter c set c.chapterName=:newName WHERE c.userId=:userId and c.subjectName=:subjectName and c.chapterName=:name")
+    void updateName(String userId,String subjectName, String name, String newName);
 }

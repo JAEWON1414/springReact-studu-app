@@ -7,6 +7,7 @@ import { Header, Title, Input } from './SubjectArea';
 import { FaPlus } from "react-icons/fa6";
 import styled from 'styled-components';
 import axios from 'axios';
+import { FiEdit } from "react-icons/fi";
 
 const Form = styled.form`
     display:flex;
@@ -41,25 +42,41 @@ const TaskName = styled.div`
 
 const TaskBody = styled.div`
         width:100%;
+`;
+const DeadLine = styled.div`
+    color:${({ theme }) => theme.color.white};
+    font-size:12px;
+    width:100%;
+`;
+const CheckBox = styled.button`
+    border:none;
+    background-color: inherit;
+    position:relative;
+    top:-8px;
+`;
+const DeleteBtn = styled.button`
+    border:none;
+    background-color: inherit;
+    position:relative;
+    top:-8px;
+`;
+const EditBtn = styled.button`
+    background-color:${({ theme }) => theme.color.darkGray};
+    border:none;
+    position:relative;
+    top:-9px;
     `;
-    const DeadLine = styled.div`
-        color:${({theme})=>theme.color.white};
-        font-size:12px;
-        width:100%;
-    `;
-    const CheckBox = styled.button`
-        border:none;
-        background-color: inherit;
-        position:relative;
-        top:-8px;
-    `;
-    const DeleteBtn = styled.button`
-        border:none;
-        background-color: inherit;
-        position:relative;
-        top:-8px;
-    `;
-    
+const EditInput = styled.input`
+    background-color:inherit;
+    border:hidden;
+    outline:none;
+    width:100%;
+    height:20px;
+    font-size:16px;
+    padding:0; 
+    border-bottom:1px solid ${({ theme }) => theme.color.black};
+`;
+
 function TaskArea({ subjectIndex, list, changeList, userId }) {
     const subject = list.subjects[subjectIndex];
     const tasks = subject.tasks;
@@ -70,6 +87,8 @@ function TaskArea({ subjectIndex, list, changeList, userId }) {
     const [selectedMonth, setSelectedMonth] = React.useState("1");
     const [selectedDay, setSelectedDay] = React.useState("1");
     const now = new Date();
+    const [isOpenEdit, setIsOpenEdit] = React.useState(Array(tasks.length).fill(false));
+    const [editInput, setEditInput] = React.useState([]);
 
     const onChangeTaskInput = (e) => { setTaskInput(e.target.value); }
     const onChangeYear = (e) => { setSelectedYear(e.target.value); }
@@ -78,14 +97,14 @@ function TaskArea({ subjectIndex, list, changeList, userId }) {
 
     const onSubmitTask = (event) => {
         event.preventDefault();
-        axios.post('/api/tasks/create',{
-            userId:userId,
-            subjectName:subject.name,
-            taskName:taskInput,
+        axios.post('/api/tasks/create', {
+            userId: userId,
+            subjectName: subject.name,
+            taskName: taskInput,
             // deadLine: new Date(selectedYear, selectedMonth - 1, selectedDay).toISOString(),
-            year:selectedYear,
-            month:selectedMonth,
-            day:selectedDay
+            year: selectedYear,
+            month: selectedMonth,
+            day: selectedDay
         })
         const updatedList = new Subjects();
         updatedList.subjects = [...list.subjects];
@@ -102,10 +121,10 @@ function TaskArea({ subjectIndex, list, changeList, userId }) {
         changeList(updatedList);
     }
     const onClickDeleteTask = (taskIndex) => {
-        axios.post('/api/tasks/delete',{
+        axios.post('/api/tasks/delete', {
             userId: userId,
             subjectName: subject.name,
-            taskName:tasks[taskIndex].name,
+            taskName: tasks[taskIndex].name,
         })
         const updatedList = new Subjects();
         updatedList.subjects = [...list.subjects];
@@ -113,8 +132,51 @@ function TaskArea({ subjectIndex, list, changeList, userId }) {
         updatedList.setTaskPercent(subjectIndex);
         changeList(updatedList);
     }
-
-    
+    const onClickEdit = (e, taskIndex) => {
+        e.stopPropagation();
+        const updatedIsOpenEdit = [...isOpenEdit];
+        updatedIsOpenEdit[taskIndex] = !updatedIsOpenEdit[taskIndex];
+        setIsOpenEdit(updatedIsOpenEdit);
+    }
+    const onChangeEditInput = (value, index) => {
+        const updatedEditInput = [...editInput];
+        if (updatedEditInput[index] === undefined) updatedEditInput[index] = ""
+        updatedEditInput[index] = value;
+        setEditInput(updatedEditInput);
+    }
+    const onSubmitEdit = (event, index) => {
+        event.preventDefault();
+        axios.post('/api/tasks/update',{
+            userId:userId,
+            subjectName:subject.name,
+            taskName:tasks[index].name,
+            newName:editInput[index],
+        })
+        const updatedList = new Subjects();
+        updatedList.subjects = [...list.subjects];
+        updatedList.subjects[subjectIndex].tasks[index].name = editInput[index];
+        changeList(updatedList);
+        onClickEdit(event, index);
+    }
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (event.target.className !== 'edit-input') {
+                const updatedIsOpenEdit = Array(list.subjects[subjectIndex].chapters.length).fill(false);
+                setIsOpenEdit(updatedIsOpenEdit);
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        let updatedEditInput = [];
+        tasks.map((task, index) => {
+            updatedEditInput[index] = task.name;
+            return task;
+        })
+        setEditInput(updatedEditInput);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [subjectIndex, list])
     return (
         <div style={{ width: "45%", borderLeft: "2px solid", paddingLeft: "20px" }}>
             <Header>
@@ -147,13 +209,19 @@ function TaskArea({ subjectIndex, list, changeList, userId }) {
                     <TaskContainer>
                         <CheckBox onClick={() => onClickTaskChecked(taskIndex)}>{task.checked === true ? <MdOutlineCheckBox size="24" /> : <MdCheckBoxOutlineBlank size="24" />}</CheckBox>
                         <TaskBody>
-                            <TaskName>{task.name}</TaskName>
+                            {!isOpenEdit[taskIndex] ?
+                                <TaskName>{task.name}</TaskName>
+                                : <form onSubmit={(e) => onSubmitEdit(e, taskIndex)}>
+                                    <EditInput className="edit-input/" type="text" value={editInput[taskIndex] || ""}
+                                        onChange={(event) => onChangeEditInput(event.target.value, taskIndex)}
+                                        onClick={(event) => event.stopPropagation()} />
+                                </form>}
                             <DeadLine>
                                 {task.deadLine.toLocaleDateString('ko-KR', {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric'
-                                })+" "}
+                                }) + " "}
                                 ({Math.round((now - task.deadLine) / (24 * 60 * 60 * 1000) - 1) > 0 ?
                                     "D+" + Math.round((now - task.deadLine) / (24 * 60 * 60 * 1000) - 1)
                                     : Math.round((now - task.deadLine) / (24 * 60 * 60 * 1000) - 1) !== 0 ?
@@ -163,6 +231,7 @@ function TaskArea({ subjectIndex, list, changeList, userId }) {
                             </DeadLine>
                         </TaskBody>
                         <div className='d-flex justify-content-start'>
+                            <EditBtn onClick={(e) => onClickEdit(e, taskIndex)}><FiEdit size="20" /></EditBtn>
                             <DeleteBtn onClick={() => onClickDeleteTask(taskIndex)}><TiDeleteOutline size="24" /></DeleteBtn>
                         </div>
                     </TaskContainer>

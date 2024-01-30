@@ -39,7 +39,6 @@ const SubjectToggle = styled.button`
     display:flex;
     flex-direction:column;
     justify-content:start;
-    margin-left:10px;
 `;
 
 export {

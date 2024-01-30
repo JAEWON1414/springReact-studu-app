@@ -1,6 +1,7 @@
 package com.example.mystudyapp.service;
 
 //import com.example.mystudyapp.controller.TaskDTO;
+import com.example.mystudyapp.controller.TaskEditDTO;
 import com.example.mystudyapp.domain.Task;
 import com.example.mystudyapp.repository.ChapterRepository;
 import com.example.mystudyapp.repository.TaskRepository;
@@ -26,5 +27,8 @@ public class TaskService {
     }
     public void delete(Task task){
         taskRepository.deleteByUserIdAndSubjectNameAndTaskName(task.getUserId(), task.getSubjectName(), task.getTaskName());
+    }
+    public void updateName(TaskEditDTO taskEditDTO){
+        taskRepository.updateName(taskEditDTO.getUserId(), taskEditDTO.getSubjectName(), taskEditDTO.getTaskName(), taskEditDTO.getNewName());
     }
 }

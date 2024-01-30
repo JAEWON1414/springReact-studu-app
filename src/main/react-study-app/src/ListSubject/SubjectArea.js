@@ -31,7 +31,6 @@ const ProgressWrapper = styled.div`
     border-radius:10px;
     border:10px solid ${({ theme }) => theme.color.darkGray};
     margin-bottom:10px;
-    padding-bottom:10px;
 `;
 const ProgressContainer = styled.div`
     display:flex;
@@ -53,7 +52,7 @@ const ProgressLeft = styled.div`
     flex-direction:row;
 `;
 const ProgressBar = styled.div`
-    min-width: 30px;
+    min-width: 10px;
     width:60%;
     height: 12px;
     background-color:rgb(240,239,255);
@@ -203,7 +202,9 @@ function Chapter({ list, changeList, subjectIndex, chapter, chapterIndex, userId
         event.preventDefault();
         axios.post('/api/chapters/update',{
             userId:userId,
+            subjectName:subject.name,
             name: chapters[index].name,
+            
             newName: editInput[index]
         })
         const updatedList = new Subjects();
@@ -230,16 +231,16 @@ function Chapter({ list, changeList, subjectIndex, chapter, chapterIndex, userId
             document.removeEventListener('click', handleClickOutside);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [list]);
+    }, [subjectIndex]);
     return (
         <ProgressWrapper>
             <li key={chapterIndex}>
                 <ProgressContainer>
-                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", width:"170px"}}>
                         <ProgressLeft>
                             <SubjectCheckbox onClick={() => onClickChapterChecked(chapterIndex)}>{chapter.progressPercent === 100 ? <MdOutlineCheckBox size="24" /> : <MdCheckBoxOutlineBlank size="24" />}</SubjectCheckbox>
                             {!isOpenEdit[chapterIndex]
-                                ? <div style={{ position: "relative", top: "-3px", height:"20px", fontSize:"16px" }}>{chapter.name}</div>
+                                ? <div style={{ position: "relative", top: "-3px", height:"100%", fontSize:"16px" }}>{chapter.name}</div>
                                 : <form onSubmit={(event) => onSubmitEdit(event, chapterIndex)}>
                                     <EditInput className="edit-input" type="text" value={editInput[chapterIndex] || ""}
                                     onChange={(event) => onChangeEditInput(event.target.value, chapterIndex)} 
@@ -250,7 +251,7 @@ function Chapter({ list, changeList, subjectIndex, chapter, chapterIndex, userId
                     </div>
                     <ProgressRight>
                         <ProgressBar><Progress $width={chapter.progressPercent}></Progress></ProgressBar>
-                        <div style={{ width: "30px", fontSize: "14px"}}>{chapter.progressPercent}%</div>
+                        <div style={{ width: "60px", fontSize: "14px"}}>{chapter.progressPercent}%</div>
                         <SubjectToggle onClick={() => onClickShowingItems(chapterIndex)}>{chapter.showingItems ? <IoIosArrowDropleft size="22" /> : <IoIosArrowDropdown size="22" />}</SubjectToggle>
                         <EditBtn onClick={(e) => onClickEdit(e,chapterIndex)} ><FiEdit size="20" /></EditBtn>
                         <SubjectDelete onClick={() => onClickDeleteChapter(chapterIndex)} style={{ position: "relative", top: "-2px", display: "flex", justifyContent: "start", flexDirection: "column" }}><TiDeleteOutline size="24" /></SubjectDelete>

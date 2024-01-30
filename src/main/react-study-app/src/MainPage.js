@@ -4,7 +4,7 @@ import ListSubject from './ListSubject/ListSubject';
 
 import Timetable from './timeTable/timeTable';
 import Blog from './blog/blog';
-import { ThemeProvider, css, styled, createGlobalStyle } from 'styled-components';
+import { ThemeProvider, css, styled, createGlobalStyle, keyframes } from 'styled-components';
 import { CgProfile } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -35,20 +35,56 @@ const theme = {
 }
 const Entire = styled.div`
   min-height: 101vh;
-  min-width:1000px;
+  min-width:1200px;
   background-color:${({ theme }) => theme.color.lightPurple};
 `;
 const Logo = styled.h2`
   margin-top:10px;
+  width:100px;
+
+`;
+
+const stretchAnimation = keyframes`
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(100%);
+  }
+`;
+const stretchAnimation2 = keyframes`
+  0% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
 `;
 
 const MenuBtn = styled.button`
   background-color: inherit;
-  color:${({theme})=>theme.color.black};
+  color:${({ theme }) => theme.color.black};
   border: hidden;
   font-size:15px;
+  &:after{
+    content:"";
+      display:block;
+      position:relative;
+      top:14px;
+      border-bottom:3px solid ${({ theme }) => theme.color.black}; 
+      animation: ${stretchAnimation2} 0.5s forwards;
+      width:100%;
+  }
   &:hover{
-    border-bottom:3px solid ${({theme})=>theme.color.black}; 
+    &:after{
+      content:"";
+      display:block;
+      position:relative;
+      top:14px;
+      border-bottom:3px solid ${({ theme }) => theme.color.black}; 
+      animation: ${stretchAnimation} 0.5s forwards;
+      width:100%;
+    }
   }
   ${({ $isOpen }) =>
     $isOpen &&
@@ -61,9 +97,10 @@ const MenuContainer = styled.div`
   display:flex;
   flex-direction: row;
   justify-content: space-around;
-  width:80%;
-  height:40px;
+  width:60%;
+  height:50px;
   margin-left:10%;
+  
 `;
 const ProfileContainer = styled.div`
   display:flex;
@@ -153,31 +190,52 @@ const ProfileName = styled.div`
   top:-3px;
 `;
 
+const Header = styled.div`
+  position: fixed;
+  z-index: 9999;
+  height: 50px;
+  width: 100%;
+  top: 0; 
+  left: 0;
+  background-color: rgb(240,239,255);
+  box-shadow: 0px 1px 3px #c3c2d5;
+
+`;
 function MainPage() {
   const [pageID, setPageID] = React.useState("1");
   const onChangePageID = (id) => { setPageID(id); };
   const [userId, setUserId] = React.useState(localStorage.getItem('userId'));
   const logout = () => { setUserId(null); }
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Entire>
-        <div className='d-flex justify-content-between'>
-          <div style={{ width: "150px" }}></div>
-          <Logo>로고</Logo>
-          <Profile userId={userId} logout={logout}></Profile>
+        <Header>
+          <div className='d-flex justify-content-between'>
+            {/* <div style={{ width: "150px" }}></div> */}
+
+            <MenuContainer >
+              <Logo>로고</Logo>
+              <MenuBtn onClick={() => onChangePageID("1")} $isOpen={pageID === "1"}>학습 관리</MenuBtn>
+              <MenuBtn onClick={() => onChangePageID("3")} $isOpen={pageID === "3"}>시간표</MenuBtn>
+              <MenuBtn onClick={() => onChangePageID("4")} $isOpen={pageID === "4"}>캘린더</MenuBtn>
+              <MenuBtn onClick={() => onChangePageID("5")} $isOpen={pageID === "5"}>블로그</MenuBtn>
+              
+              
+            </MenuContainer>
+            <Profile userId={userId} logout={logout}></Profile>
+          </div>
+          {/* <hr style={{ marginTop: "0px" }} /> */}
+        </Header>
+        <div style={{ paddingTop: "50px" }}>
+
+          {pageID === "1" ? <ListSubject userId={userId} /> : null}
+          {pageID === "3" ? <Timetable /> : null}
+          {pageID === "4" ? <Calendar /> : null}
+          {pageID === "5" ? <Blog /> : null}
         </div>
-        <MenuContainer>
-          <MenuBtn onClick={() => onChangePageID("1")} $isOpen={pageID === "1"}>학습 관리</MenuBtn>
-          <MenuBtn onClick={() => onChangePageID("3")} $isOpen={pageID === "3"}>시간표</MenuBtn>
-          <MenuBtn onClick={() => onChangePageID("4")} $isOpen={pageID === "4"}>캘린더</MenuBtn>
-          <MenuBtn onClick={() => onChangePageID("5")} $isOpen={pageID === "5"}>블로그</MenuBtn>
-        </MenuContainer>
-        <hr style={{ marginTop: "0px" }} />
-        {pageID === "1" ? <ListSubject userId={userId} /> : null}
-        {pageID === "3" ? <Timetable /> : null}
-        {pageID === "4" ? <Calendar /> : null}
-        {pageID === "5" ? <Blog /> : null}
+
       </Entire>
     </ThemeProvider>
   );

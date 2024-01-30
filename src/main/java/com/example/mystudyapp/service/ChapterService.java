@@ -39,6 +39,6 @@ public class ChapterService {
     }
 
     public void updateName(ChapterEditDTO chapterEditDTO){
-        chapterRepository.updateName(chapterEditDTO.getUserId(),chapterEditDTO.getName(),chapterEditDTO.getNewName());
+        chapterRepository.updateName(chapterEditDTO.getUserId(),chapterEditDTO.getSubjectName(),chapterEditDTO.getName(),chapterEditDTO.getNewName());
     }
 }

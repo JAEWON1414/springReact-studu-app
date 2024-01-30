@@ -4,11 +4,13 @@ public class ChapterEditDTO {
     private String userId;
     private String name;
     private String newName;
+    private String subjectName;
 
-    public ChapterEditDTO(String userId, String name, String newName) {
+    public ChapterEditDTO(String userId, String name, String newName, String subjectName) {
         this.userId = userId;
         this.name = name;
         this.newName = newName;
+        this.subjectName = subjectName;
     }
 
     public String getUserId() {
@@ -21,5 +23,9 @@ public class ChapterEditDTO {
 
     public String getNewName() {
         return newName;
+    }
+
+    public String getSubjectName() {
+        return subjectName;
     }
 }

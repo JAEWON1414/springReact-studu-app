@@ -15,7 +15,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Transactional
     @Modifying
     void deleteByUserIdAndSubjectNameAndTaskName(String userId, String subjectName, String TaskName);
-//    @Transactional
-//    @Modifying
-//    @Query("")
+    @Transactional
+    @Modifying
+    @Query("UPDATE Task t set t.taskName=:newName WHERE t.userId=:userId AND t.subjectName=:subjectName AND t.taskName=:taskName")
+    void updateName(String userId, String subjectName, String taskName, String newName);
 }

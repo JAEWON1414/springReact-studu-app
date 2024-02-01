@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import SubjectArea from './SubjectArea';
 import TaskArea from './TaskArea';
-
+import { useSelector } from 'react-redux';
 
 const AreaDetail = styled.div`
     min-width:710px;
@@ -35,15 +35,15 @@ const DetailBody = styled.div`
 `;
 
 function DetailArea({ subjectIndex, list, changeList, userId }) {
-    const subject = list.subjects[subjectIndex];
+    const subjects = useSelector(state => state.list.subjects);
 
-    return (subject !== undefined && (
+    return (subjects[subjectIndex] !== undefined && (
         <AreaDetail>
             <DetailWraper>
-                <DetailHeader>{subject.name}</DetailHeader>
+                <DetailHeader>{subjects[subjectIndex].subjectName}</DetailHeader>
                 <DetailBody>
-                    <SubjectArea subjectIndex={subjectIndex} list={list} changeList={changeList} userId={userId}/>
-                    <TaskArea subjectIndex={subjectIndex} list={list} changeList={changeList} userId={userId}/>
+                    <SubjectArea subjectIndex={subjectIndex} userId={userId}/>
+                    <TaskArea subjectIndex={subjectIndex}  userId={userId}/>
                 </DetailBody>
             </DetailWraper>
         </AreaDetail>)

@@ -1,13 +1,14 @@
 import React from 'react';
 import Calendar from './calendar/calendar';
 import ListSubject from './ListSubject/ListSubject';
-
+import axios from "axios";
 import Timetable from './timeTable/timeTable';
 import Blog from './blog/blog';
 import { ThemeProvider, css, styled, createGlobalStyle, keyframes } from 'styled-components';
 import { CgProfile } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useDispatch } from 'react-redux';
 
 const GlobalStyle = createGlobalStyle`
   *{
@@ -206,36 +207,120 @@ function MainPage() {
   const onChangePageID = (id) => { setPageID(id); };
   const [userId, setUserId] = React.useState(localStorage.getItem('userId'));
   const logout = () => { setUserId(null); }
+  const [loading, setLoading] = React.useState(true);
+  const dispatch = useDispatch();
 
+  const fetchData = async () => {
+    try {
+      const subjectsResponse = await axios.post('/api/subjects', userId);
+      const subjectsFromServer = subjectsResponse.data;
+      for (let subjectIndex = 0; subjectIndex < subjectsFromServer.length; subjectIndex++) {
+        const subject = subjectsFromServer[subjectIndex];
+        dispatch({
+          type: 'listSlice/fetchSubjects',
+          subjectName: subject.name,
+        });
+        const chaptersResponse = await axios.post('/api/chapters', {
+          userId: userId,
+          subjectName: subject.name,
+        });
+        const chaptersFromServer = chaptersResponse.data;
+        for (let chapterIndex = 0; chapterIndex < chaptersFromServer.length; chapterIndex++) {
+          const chapter = chaptersFromServer[chapterIndex];
+          dispatch({
+            type: 'listSlice/fetchChapters',
+            chapterName: chapter.chapterName,
+            subjectIndex: subjectIndex,
+            checked: chapter.checked
+          })
+          const itemResponse = await axios.post('/api/items', {
+            userId: userId,
+            subjectName: subject.name,
+            chapterName: chapter.chapterName,
+          });
+          const itemsFromServer = itemResponse.data;
+          for (let itemIndex = 0; itemIndex < itemsFromServer.length; itemIndex++) {
+            const item = itemsFromServer[itemIndex];
+            dispatch({
+              type: 'listSlice/fetchItems',
+              subjectIndex: subjectIndex,
+              chapterIndex: chapterIndex,
+              itemName: item.itemName,
+              checked: item.checked
+            })
+          }
+          dispatch({
+            type: 'listSlice/setChapterPercent',
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex
+          })
+        }
+        dispatch({
+          type: 'listSlice/setSubjectProgressPercent',
+          subjectIndex: subjectIndex
+        })
+        const taskResponse = await axios.post('/api/tasks', {
+          userId: userId,
+          subjectName: subject.name,
+        })
+        const tasksFromServer = taskResponse.data;
+        for (let taskIndex = 0; taskIndex < tasksFromServer.length; taskIndex++) {
+          const task = tasksFromServer[taskIndex];
+          dispatch({
+            type: 'listSlice/fetchTasks',
+            subjectIndex: subjectIndex,
+            taskName: task.taskName,
+            year: task.year,
+            month: task.month - 1,
+            day: task.day,
+            checked: task.checked
+          })
+        }
+        dispatch({
+          type: 'listSlice/setSubjectTaskPercent',
+          subjectIndex: subjectIndex
+        })
+        setLoading(false);
+      }
+
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  React.useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [null]);
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Entire>
         <Header>
           <div className='d-flex justify-content-between'>
-            {/* <div style={{ width: "150px" }}></div> */}
-
             <MenuContainer >
               <Logo>로고</Logo>
               <MenuBtn onClick={() => onChangePageID("1")} $isOpen={pageID === "1"}>학습 관리</MenuBtn>
               <MenuBtn onClick={() => onChangePageID("3")} $isOpen={pageID === "3"}>시간표</MenuBtn>
               <MenuBtn onClick={() => onChangePageID("4")} $isOpen={pageID === "4"}>캘린더</MenuBtn>
               <MenuBtn onClick={() => onChangePageID("5")} $isOpen={pageID === "5"}>블로그</MenuBtn>
-              
-              
             </MenuContainer>
             <Profile userId={userId} logout={logout}></Profile>
           </div>
-          {/* <hr style={{ marginTop: "0px" }} /> */}
         </Header>
         <div style={{ paddingTop: "50px" }}>
-
-          {pageID === "1" ? <ListSubject userId={userId} /> : null}
+          {loading ? <h2>loading...</h2>
+            : <div>
+              {pageID === "1" ? <ListSubject userId={userId} /> : null}
+              {pageID === "3" ? <Timetable /> : null}
+              {pageID === "4" ? <Calendar /> : null}
+              {pageID === "5" ? <Blog /> : null}
+            </div>}
+          {/* {pageID === "1" ? <ListSubject userId={userId} /> : null}
           {pageID === "3" ? <Timetable /> : null}
           {pageID === "4" ? <Calendar /> : null}
-          {pageID === "5" ? <Blog /> : null}
+          {pageID === "5" ? <Blog /> : null} */}
         </div>
-
       </Entire>
     </ThemeProvider>
   );

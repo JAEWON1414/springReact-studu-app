@@ -1,11 +1,9 @@
 import 'react-circular-progressbar/dist/styles.css';
-import Subjects from './Subjects';
 import { FiEdit } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
 import React from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
-
+import { useDispatch, useSelector } from 'react-redux';
 const SubjectName = styled.div`
     background-color:inherit;
     color:${({ theme }) => theme.color.black};
@@ -89,27 +87,28 @@ const ProgressRight = styled.div`
 
 const EditInput = styled.input`
     background-color:inherit;
+    width:180px;
     border:hidden;
     outline:none;
     font-size:19px;
     font-weight:900;
     height:30px;
-    border-bottom:1px solid ${({theme})=>theme.color.black};
+    border-bottom:1px solid ${({ theme }) => theme.color.black};
 `;
-function OverviewArea({ list, changeList, showingIndex, changeShowingIndex, userId }) {
-    const [isOpenEdit, setIsOpenEdit] = React.useState(Array(list.subjects.length).fill(false));
+function OverviewArea({ showingIndex, changeShowingIndex, userId }) {
+    const subjects = useSelector(state => state.list.subjects);
+    const dispatch = useDispatch();
+    const [isOpenEdit, setIsOpenEdit] = React.useState(Array(subjects.length).fill(false));
     const [editInput, setEditInput] = React.useState([]);
-    const onClickDeleteSubject = (e, index) => {
+    
+    const onClickDeleteSubject = (e, subjectIndex) => {
         e.stopPropagation();
-        axios.post('/api/subjects/delete', {
-            userId: userId,
-            name: list.subjects[index].name,
-        });
-        if (index <= showingIndex) changeShowingIndex(showingIndex - 1);
-        const updatedList = new Subjects();
-        updatedList.subjects = [...list.subjects];
-        updatedList.deleteSubject(index);
-        changeList(updatedList);
+        dispatch({
+            type: 'listSlice/deleteSubject',
+            subjectIndex: subjectIndex,
+            userId: userId
+        })
+        if (subjectIndex <= showingIndex) changeShowingIndex(showingIndex - 1);
     }
     const onClickShowing = (index) => {
         changeShowingIndex(index);
@@ -120,36 +119,32 @@ function OverviewArea({ list, changeList, showingIndex, changeShowingIndex, user
         updatedIsOpenEdit[index] = !updatedIsOpenEdit[index];
         setIsOpenEdit(updatedIsOpenEdit);
     }
-    const onSubmitEdit = (event, index) => {
-        // event.stopPropagation();
-        axios.post('/api/subjects/update', {
-            userId: userId,
-            name: list.subjects[index].name,
-            newName: editInput[index]
-        })
+    const onSubmitEdit = (event, subjectIndex) => {
         event.preventDefault();
-        const updatedList = new Subjects();
-        updatedList.subjects = [...list.subjects];
-        updatedList.subjects[index].name = editInput[index];
-        changeList(updatedList);
-        onClickEdit(event, index);
+        dispatch({
+            type: 'listSlice/editSubjectName',
+            userId: userId,
+            subjectIndex: subjectIndex,
+            newName: editInput[subjectIndex]
+        })
+        onClickEdit(event, subjectIndex);
     }
     const onChangeEditInput = (value, index) => {
         const updatedEditInput = [...editInput];
         updatedEditInput[index] = value;
         setEditInput(updatedEditInput);
     }
-    React.useEffect(()=>{
+    React.useEffect(() => {
         const handleClickOutside = (event) => {
             if (event.target.className !== 'edit-input') {
-                const updatedIsOpenEdit = Array(list.subjects.length).fill(false);
+                const updatedIsOpenEdit = Array(subjects.length).fill(false);
                 setIsOpenEdit(updatedIsOpenEdit);
             }
         };
         document.addEventListener('click', handleClickOutside);
-        let updatedEditInput=[];
-        list.subjects.map((subject,index)=>{
-            updatedEditInput[index] = subject.name;
+        let updatedEditInput = [];
+        subjects.map((subject, index) => {
+            updatedEditInput[index] = subject.subjectName;
             return subject;
         })
         setEditInput(updatedEditInput);
@@ -157,21 +152,21 @@ function OverviewArea({ list, changeList, showingIndex, changeShowingIndex, user
             document.removeEventListener('click', handleClickOutside);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[list])
+    }, [subjects])
     return (
         <AreaOverview>
-            {list.subjects.map((subject, index) => (
+            {subjects.map((subject, index) => (
                 (<li key={index}>
-                    
+
                     <SubjectContainer onClick={() => onClickShowing(index)}>
                         <SubjectHeader>
-                            {!isOpenEdit[index] ? <SubjectName>{subject.name}</SubjectName>
-                                : 
-                            <form onSubmit={(event) => onSubmitEdit(event, index)}>
-                                <EditInput className="edit-input" type="text" value={editInput[index]}
-                                    onChange={(event) => onChangeEditInput(event.target.value, index)} 
-                                    onClick={(event)=> event.stopPropagation()}/>
-                            </form>}
+                            {!isOpenEdit[index] ? <SubjectName>{subject.subjectName}</SubjectName>
+                                :
+                                <form onSubmit={(event) => onSubmitEdit(event, index)}>
+                                    <EditInput className="edit-input" type="text" value={editInput[index]}
+                                        onChange={(event) => onChangeEditInput(event.target.value, index)}
+                                        onClick={(event) => event.stopPropagation()} />
+                                </form>}
                             <span>
                                 <SubjectEdit onClick={(e) => onClickEdit(e, index)} style={{ marginRight: "5px" }}> <FiEdit size="20" /> </SubjectEdit>
                                 <SubjectDelete onClick={(e) => onClickDeleteSubject(e, index)} ><TiDeleteOutline size="24" /></SubjectDelete>
@@ -185,7 +180,8 @@ function OverviewArea({ list, changeList, showingIndex, changeShowingIndex, user
                         <ProgressContainer>
                             <ProgressLeft>과제</ProgressLeft>
                             <ProgressBar><Progress $width={subject.taskPercent} /></ProgressBar>
-                            <ProgressRight>{list.countTask(index) !== 0 ? list.countCheckedTask(index) + "개/" + list.countTask(index) + "개" : "과제없음"}</ProgressRight>
+                            {/* <ProgressRight>{list.countTask(index) !== 0 ? list.countCheckedTask(index) + "개/" + list.countTask(index) + "개" : "과제없음"}</ProgressRight> */}
+                            <ProgressRight>0개/0개</ProgressRight>
                         </ProgressContainer>
                     </SubjectContainer>
                 </li>)

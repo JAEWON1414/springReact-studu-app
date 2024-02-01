@@ -2,12 +2,12 @@ import { IoIosArrowDropleft, IoIosArrowDropdown } from "react-icons/io";
 import { MdOutlineCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md";
 import { TiDeleteOutline } from "react-icons/ti";
 import { SubjectCheckbox, SubjectToggle, SubjectDelete } from './StyledComponent';
-import axios from "axios";
-import Subjects from './Subjects';
+
 import React from 'react';
 import styled from 'styled-components';
 import { FaPlus } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
+import { useDispatch, useSelector } from 'react-redux';
 
 export const Header = styled.div`
     display:flex;
@@ -94,25 +94,27 @@ const EditInput = styled.input`
     border-bottom:1px solid ${({ theme }) => theme.color.black};
     
     `;
-function SubjectArea({ subjectIndex, list, changeList, userId }) {
-    const chapters = list.subjects[subjectIndex].chapters;
+function SubjectArea({ subjectIndex,  userId }) {
+    const dispatch = useDispatch();
+    const subjects = useSelector(state => state.list.subjects);
+
+    const chapters = subjects[subjectIndex].chapters;
     const [chapterInput, setChapterInput] = React.useState("");
     const onChangechapterInput = (event) => {
         setChapterInput(event.target.value);
     };
     const onSubmitChapterInput = (event) => {
         event.preventDefault();
-        if (chapterInput === "") return;
-        axios.post('/api/chapters/create', {
-            userId: userId,
-            subjectName: list.subjects[subjectIndex].name,
-            chapterName: chapterInput
+        dispatch({
+            type: 'listSlice/addChapter',
+            subjectIndex: subjectIndex,
+            chapterInput: chapterInput,
+            userId:userId,
         })
-        const updatedList = new Subjects();
-        updatedList.subjects = [...list.subjects];
-        updatedList.addChapter(subjectIndex, chapterInput);
-        updatedList.setTotalProgressPercent(subjectIndex);
-        changeList(updatedList);
+        dispatch({
+            type: 'listSlice/subjectProgressPercent',
+            subjectIndex: subjectIndex
+        });
         setChapterInput("");
     };
 
@@ -127,7 +129,7 @@ function SubjectArea({ subjectIndex, list, changeList, userId }) {
                 </form>
             </Header>
             <ul style={{ padding: "0" }}>{chapters.map((chapter, chapterIndex) => (
-                <Chapter key={chapterIndex} list={list} changeList={changeList} subjectIndex={subjectIndex} chapter={chapter} chapterIndex={chapterIndex} userId={userId} />
+                <Chapter key={chapterIndex}  subjectIndex={subjectIndex}  chapterIndex={chapterIndex} userId={userId} />
             ))}
             </ul>
         </div>
@@ -135,56 +137,52 @@ function SubjectArea({ subjectIndex, list, changeList, userId }) {
     );
 }
 
-function Chapter({ list, changeList, subjectIndex, chapter, chapterIndex, userId }) {
-    const subject = list.subjects[subjectIndex];
-    const chapters = list.subjects[subjectIndex].chapters;
+function Chapter({  subjectIndex, chapterIndex, userId }) {
+    const subjects = useSelector(state => state.list.subjects);
+    const subject = subjects[subjectIndex];
+    const chapters = subject.chapters;
+    const chapter = chapters[chapterIndex];
+    const dispatch = useDispatch();
+
     const [editInput, setEditInput] = React.useState([]);
     const [isOpenEdit, setIsOpenEdit] = React.useState(Array(chapters.length).fill(false));
     const onClickShowingItems = (chapterIndex) => {
-        const updatedList = new Subjects();
-        updatedList.subjects = [...list.subjects];
-        updatedList.convertShowingItems(subjectIndex, chapterIndex);
-        changeList(updatedList);
-    }
-    const onClickDeleteChapter = (chapterIndex) => {
-        axios.post('/api/chapters/delete', {
-            userId: userId,
-            subjectName: subject.name,
-            chapterName: chapters[chapterIndex].name,
+        dispatch({
+            type: 'listSlice/convertShowingItems',
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex
         });
-        const updatedList = new Subjects();
-        updatedList.subjects = [...list.subjects];
-        updatedList.deleteChapter(subjectIndex, chapterIndex);
-        updatedList.setTotalProgressPercent(subjectIndex);
-        changeList(updatedList);
+    }
+
+    const onClickDeleteChapter = (chapterIndex) => {
+        dispatch({
+            type: 'listSlice/deleteChapter',
+            userId: userId,
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex
+        })
+        dispatch({
+            type: 'listSlice/setSubjectProgressPercent',
+            subjectIndex: subjectIndex
+        })
     }
 
     const onClickChapterChecked = (chapterIndex) => {
-        axios.post('/api/chapters/updateCheck', {
+        dispatch({
+            type: 'listSlice/convertChapterChecked',
             userId: userId,
-            subjectName: subject.name,
-            chapterName: chapters[chapterIndex].name,
-            checked: !chapters[chapterIndex].checked,
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex,
+        })
+        dispatch({
+            type: 'listSlice/setChapterPercent',
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex
         });
-        const updatedList = new Subjects();
-        updatedList.subjects = [...list.subjects];
-        const updatedChapter = updatedList.subjects[subjectIndex].chapters[chapterIndex];
-        if (updatedChapter.progressPercent === 100) {
-            updatedChapter.items.map((item, itemIndex) => {
-                item.checked = false;
-                return item;
-            })
-            updatedChapter.checked = false;
-        } else {
-            updatedChapter.items.map((item, itemIndex) => {
-                item.checked = true;
-                return item;
-            })
-            updatedChapter.checked = true;
-        }
-        updatedList.setChapterProgressPercent(subjectIndex, chapterIndex);
-        updatedList.setTotalProgressPercent(subjectIndex);
-        changeList(updatedList);
+        dispatch({
+            type: 'listSlice/setSubjectProgressPercent',
+            subjectIndex: subjectIndex
+        })
     }
     const onClickEdit = (e, index) => {
         e.stopPropagation();
@@ -198,25 +196,21 @@ function Chapter({ list, changeList, subjectIndex, chapter, chapterIndex, userId
         updatedEditInput[index] = value;
         setEditInput(updatedEditInput);
     }
-    const onSubmitEdit = (event, index) => {
+    const onSubmitEdit = (event, chapterIndex) => {
         event.preventDefault();
-        axios.post('/api/chapters/update',{
-            userId:userId,
-            subjectName:subject.name,
-            name: chapters[index].name,
-            
-            newName: editInput[index]
+        dispatch({
+            type: 'listSlice/editChapterName',
+            userId: userId,
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex,
+            newName: editInput[chapterIndex]
         })
-        const updatedList = new Subjects();
-        updatedList.subjects = [...list.subjects];
-        updatedList.subjects[subjectIndex].chapters[index].name = editInput[index];
-        changeList(updatedList);
-        onClickEdit(event, index);
+        onClickEdit(event, chapterIndex);
     }
     React.useEffect(() => {
         const handleClickOutside = (event) => {
             if (event.target.className !== 'edit-input') {
-                const updatedIsOpenEdit = Array(list.subjects[subjectIndex].chapters.length).fill(false);
+                const updatedIsOpenEdit = Array(subjects[subjectIndex].chapters.length).fill(false);
                 setIsOpenEdit(updatedIsOpenEdit);
             }
         };
@@ -236,37 +230,41 @@ function Chapter({ list, changeList, subjectIndex, chapter, chapterIndex, userId
         <ProgressWrapper>
             <li key={chapterIndex}>
                 <ProgressContainer>
-                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", width:"170px"}}>
+                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", width: "170px" }}>
                         <ProgressLeft>
                             <SubjectCheckbox onClick={() => onClickChapterChecked(chapterIndex)}>{chapter.progressPercent === 100 ? <MdOutlineCheckBox size="24" /> : <MdCheckBoxOutlineBlank size="24" />}</SubjectCheckbox>
                             {!isOpenEdit[chapterIndex]
-                                ? <div style={{ position: "relative", top: "-3px", height:"100%", fontSize:"16px" }}>{chapter.name}</div>
+                                ? <div style={{ position: "relative", top: "-3px", height: "100%", fontSize: "16px" }}>{chapter.chapterName}</div>
                                 : <form onSubmit={(event) => onSubmitEdit(event, chapterIndex)}>
                                     <EditInput className="edit-input" type="text" value={editInput[chapterIndex] || ""}
-                                    onChange={(event) => onChangeEditInput(event.target.value, chapterIndex)} 
-                                    onClick={(event)=> event.stopPropagation()}/>
-                                
+                                        onChange={(event) => onChangeEditInput(event.target.value, chapterIndex)}
+                                        onClick={(event) => event.stopPropagation()} />
+
                                 </form>}
                         </ProgressLeft>
                     </div>
                     <ProgressRight>
                         <ProgressBar><Progress $width={chapter.progressPercent}></Progress></ProgressBar>
-                        <div style={{ width: "60px", fontSize: "14px"}}>{chapter.progressPercent}%</div>
+                        <div style={{ width: "60px", fontSize: "14px" }}>{chapter.progressPercent}%</div>
                         <SubjectToggle onClick={() => onClickShowingItems(chapterIndex)}>{chapter.showingItems ? <IoIosArrowDropleft size="22" /> : <IoIosArrowDropdown size="22" />}</SubjectToggle>
-                        <EditBtn onClick={(e) => onClickEdit(e,chapterIndex)} ><FiEdit size="20" /></EditBtn>
+                        <EditBtn onClick={(e) => onClickEdit(e, chapterIndex)} ><FiEdit size="20" /></EditBtn>
                         <SubjectDelete onClick={() => onClickDeleteChapter(chapterIndex)} style={{ position: "relative", top: "-2px", display: "flex", justifyContent: "start", flexDirection: "column" }}><TiDeleteOutline size="24" /></SubjectDelete>
                     </ProgressRight>
                 </ProgressContainer>
                 {chapter.showingItems ?
-                    <Items list={list} changeList={changeList} subjectIndex={subjectIndex} chapter={chapter} chapterIndex={chapterIndex} userId={userId} />
+                    <Items  subjectIndex={subjectIndex} chapterIndex={chapterIndex} userId={userId} />
                     : null}
             </li>
         </ProgressWrapper>
     );
 }
-function Items({ list, changeList, subjectIndex, chapter, chapterIndex, userId }) {
-    const subject = list.subjects[subjectIndex];
-    const chapters = list.subjects[subjectIndex].chapters;
+function Items({  subjectIndex, chapterIndex, userId }) {
+    const subjects = useSelector(state => state.list.subjects);
+    const subject = subjects[subjectIndex];
+    const chapter = subject.chapters[chapterIndex];
+    
+    const dispatch = useDispatch();
+
     const [itemInput, setItemInput] = React.useState([]);
     const onChangeItemInput = (value, chapterIndex) => {
         const updatedItemInput = [...itemInput];
@@ -277,47 +275,54 @@ function Items({ list, changeList, subjectIndex, chapter, chapterIndex, userId }
     const onSubmitItemInput = (event, chapterIndex) => {
         event.preventDefault();
         if (itemInput[chapterIndex] === undefined) return;
-        axios.post('/api/items/create', {
+        dispatch({
+            type: 'listSlice/addItem',
             userId: userId,
-            subjectName: list.subjects[subjectIndex].name,
-            chapterName: list.subjects[subjectIndex].chapters[chapterIndex].name,
-            itemName: itemInput[chapterIndex]
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex,
+            itemInput: itemInput[chapterIndex]
         })
-        const updatedList = new Subjects();
-        updatedList.subjects = [...list.subjects];
-        updatedList.addItem(subjectIndex, chapterIndex, itemInput[chapterIndex]);
-        updatedList.setTotalProgressPercent(subjectIndex);
-        changeList(updatedList);
+        dispatch({
+            type: 'listSlice/setSubjectProgressPercent',
+            subjectIndex: subjectIndex
+        })
         setItemInput("");
     }
     const onClickDeleteItem = (chapterIndex, itemIndex) => {
-        axios.post('/api/items/delete', {
+        dispatch({
+            type: 'listSlice/deleteItem',
             userId: userId,
-            subjectName: subject.name,
-            chapterName: chapters[chapterIndex].name,
-            itemName: chapters[chapterIndex].items[itemIndex].name,
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex,
+            itemIndex: itemIndex
+        })
+        dispatch({
+            type: 'listSlice/setChapterPercent',
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex
         });
-        const updatedList = new Subjects();
-        updatedList.subjects = [...list.subjects];
-        updatedList.deleteItem(subjectIndex, chapterIndex, itemIndex);
-        updatedList.setChapterProgressPercent(subjectIndex, chapterIndex);
-        updatedList.setTotalProgressPercent(subjectIndex);
-        changeList(updatedList);
+        dispatch({
+            type: 'listSlice/setSubjectProgressPercent',
+            subjectIndex: subjectIndex
+        })
     }
     const onClickItemChecked = (chapterIndex, itemIndex) => {
-        axios.post('/api/items/updateCheck', {
-            userId: userId,
-            subjectName: subject.name,
-            chapterName: chapters[chapterIndex].name,
-            itemName: chapters[chapterIndex].items[itemIndex].name,
-            checked: !chapters[chapterIndex].items[itemIndex].checked,
+        dispatch({
+            type:'listSlice/convertItemChecked',
+            userId:userId,
+            subjectIndex:subjectIndex,
+            chapterIndex:chapterIndex,
+            itemIndex:itemIndex
+        })
+        dispatch({
+            type: 'listSlice/setChapterPercent',
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex
         });
-        const updatedList = new Subjects();
-        updatedList.subjects = [...list.subjects];
-        updatedList.subjects[subjectIndex].chapters[chapterIndex].items[itemIndex].checked = !updatedList.subjects[subjectIndex].chapters[chapterIndex].items[itemIndex].checked;
-        updatedList.setChapterProgressPercent(subjectIndex, chapterIndex);
-        updatedList.setTotalProgressPercent(subjectIndex);
-        changeList(updatedList);
+        dispatch({
+            type: 'listSlice/setSubjectProgressPercent',
+            subjectIndex: subjectIndex
+        })
     }
     return (
         <div>
@@ -330,10 +335,10 @@ function Items({ list, changeList, subjectIndex, chapter, chapterIndex, userId }
             </form>
             <ul >{chapter.items.map((item, itemIndex) => (chapter.showingItems &&
                 <li key={itemIndex}>
-                    <ProgressContainer style={{ marginLeft: "10%", width:"700px" }}>
+                    <ProgressContainer style={{ marginLeft: "10%", width: "700px" }}>
                         <ProgressLeft >
                             <SubjectCheckbox onClick={() => onClickItemChecked(chapterIndex, itemIndex)}>{item.checked ? <MdOutlineCheckBox size="24" /> : <MdCheckBoxOutlineBlank size="24" />}</SubjectCheckbox>
-                            <div>{item.name}</div></ProgressLeft>
+                            <div>{item.itemName}</div></ProgressLeft>
                         <span>
                             <SubjectDelete onClick={() => onClickDeleteItem(chapterIndex, itemIndex)}><TiDeleteOutline size="24" /></SubjectDelete>
                         </span>

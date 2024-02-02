@@ -176,7 +176,7 @@ function TaskArea({ subjectIndex, userId }) {
         document.addEventListener('click', handleClickOutside);
         let updatedEditInput = [];
         tasks.map((task, index) => {
-            updatedEditInput[index] = task.name;
+            updatedEditInput[index] = task.taskName;
             return task;
         })
         setEditInput(updatedEditInput);

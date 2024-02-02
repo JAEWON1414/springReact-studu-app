@@ -161,9 +161,7 @@ const listSlice = createSlice({
                 if (item.checked) count = count + 1;
                 return item;
             })
-            if (chapter.checked === true)
-                chapter.progressPercent = 100;
-            else if (chapter.items.length === 0)
+            if (chapter.items.length === 0)
                 chapter.progressPercent = 0;
             else
                 chapter.progressPercent = Math.round(100 * count / chapter.items.length);
@@ -253,6 +251,9 @@ const listSlice = createSlice({
                 checked: !item.checked,
             });
             item.checked = !item.checked;
+            if (!item.checked && chapter.checked){
+                chapter.checked = false;
+            }
         },
         convertTaskChecked: (state, action) => {
             const task = state.subjects[action.subjectIndex].tasks[action.taskIndex];

@@ -94,22 +94,23 @@ const EditInput = styled.input`
     border-bottom:1px solid ${({ theme }) => theme.color.black};
     
     `;
-function SubjectArea({ subjectIndex,  userId }) {
+
+
+function SubjectArea({ subjectIndex, userId }) {
     const dispatch = useDispatch();
     const subjects = useSelector(state => state.list.subjects);
-
     const chapters = subjects[subjectIndex].chapters;
+
     const [chapterInput, setChapterInput] = React.useState("");
-    const onChangechapterInput = (event) => {
-        setChapterInput(event.target.value);
-    };
+    const onChangechapterInput = (event) => { setChapterInput(event.target.value); };
+
     const onSubmitChapterInput = (event) => {
         event.preventDefault();
         dispatch({
             type: 'listSlice/addChapter',
             subjectIndex: subjectIndex,
             chapterInput: chapterInput,
-            userId:userId,
+            userId: userId,
         })
         dispatch({
             type: 'listSlice/subjectProgressPercent',
@@ -117,7 +118,6 @@ function SubjectArea({ subjectIndex,  userId }) {
         });
         setChapterInput("");
     };
-
     return (
         <div style={{ width: "45%" }}>
             <Header>
@@ -129,18 +129,16 @@ function SubjectArea({ subjectIndex,  userId }) {
                 </form>
             </Header>
             <ul style={{ padding: "0" }}>{chapters.map((chapter, chapterIndex) => (
-                <Chapter key={chapterIndex}  subjectIndex={subjectIndex}  chapterIndex={chapterIndex} userId={userId} />
+                <Chapter key={chapterIndex} subjectIndex={subjectIndex} chapterIndex={chapterIndex} userId={userId} />
             ))}
             </ul>
         </div>
-
     );
 }
 
-function Chapter({  subjectIndex, chapterIndex, userId }) {
+function Chapter({ subjectIndex, chapterIndex, userId }) {
     const subjects = useSelector(state => state.list.subjects);
-    const subject = subjects[subjectIndex];
-    const chapters = subject.chapters;
+    const chapters = subjects[subjectIndex].chapters;
     const chapter = chapters[chapterIndex];
     const dispatch = useDispatch();
 
@@ -217,7 +215,7 @@ function Chapter({  subjectIndex, chapterIndex, userId }) {
         document.addEventListener('click', handleClickOutside);
         let updatedEditInput = [];
         chapters.map((chapter, index) => {
-            updatedEditInput[index] = chapter.name;
+            updatedEditInput[index] = chapter.chapterName;
             return chapter;
         })
         setEditInput(updatedEditInput);
@@ -252,25 +250,34 @@ function Chapter({  subjectIndex, chapterIndex, userId }) {
                     </ProgressRight>
                 </ProgressContainer>
                 {chapter.showingItems ?
-                    <Items  subjectIndex={subjectIndex} chapterIndex={chapterIndex} userId={userId} />
+                    <Items subjectIndex={subjectIndex} chapterIndex={chapterIndex} userId={userId} />
                     : null}
             </li>
         </ProgressWrapper>
     );
 }
-function Items({  subjectIndex, chapterIndex, userId }) {
-    const subjects = useSelector(state => state.list.subjects);
-    const subject = subjects[subjectIndex];
-    const chapter = subject.chapters[chapterIndex];
-    
+function Items({ subjectIndex, chapterIndex, userId }) {
     const dispatch = useDispatch();
-
+    const subjects = useSelector(state => state.list.subjects);
+    const chapter = subjects[subjectIndex].chapters[chapterIndex];
     const [itemInput, setItemInput] = React.useState([]);
+
     const onChangeItemInput = (value, chapterIndex) => {
         const updatedItemInput = [...itemInput];
         if (updatedItemInput[chapterIndex] === undefined) updatedItemInput[chapterIndex] = ""
         updatedItemInput[chapterIndex] = value
         setItemInput(updatedItemInput);
+    }
+    const dispatchProgressPercent = (subjectIndex, chapterIndex) => {
+        dispatch({
+            type: 'listSlice/setChapterPercent',
+            subjectIndex: subjectIndex,
+            chapterIndex: chapterIndex
+        });
+        dispatch({
+            type: 'listSlice/setSubjectProgressPercent',
+            subjectIndex: subjectIndex
+        })
     }
     const onSubmitItemInput = (event, chapterIndex) => {
         event.preventDefault();
@@ -282,10 +289,7 @@ function Items({  subjectIndex, chapterIndex, userId }) {
             chapterIndex: chapterIndex,
             itemInput: itemInput[chapterIndex]
         })
-        dispatch({
-            type: 'listSlice/setSubjectProgressPercent',
-            subjectIndex: subjectIndex
-        })
+        dispatchProgressPercent(subjectIndex, chapterIndex);
         setItemInput("");
     }
     const onClickDeleteItem = (chapterIndex, itemIndex) => {
@@ -296,33 +300,17 @@ function Items({  subjectIndex, chapterIndex, userId }) {
             chapterIndex: chapterIndex,
             itemIndex: itemIndex
         })
-        dispatch({
-            type: 'listSlice/setChapterPercent',
-            subjectIndex: subjectIndex,
-            chapterIndex: chapterIndex
-        });
-        dispatch({
-            type: 'listSlice/setSubjectProgressPercent',
-            subjectIndex: subjectIndex
-        })
+        dispatchProgressPercent(subjectIndex, chapterIndex);
     }
     const onClickItemChecked = (chapterIndex, itemIndex) => {
         dispatch({
-            type:'listSlice/convertItemChecked',
-            userId:userId,
-            subjectIndex:subjectIndex,
-            chapterIndex:chapterIndex,
-            itemIndex:itemIndex
-        })
-        dispatch({
-            type: 'listSlice/setChapterPercent',
+            type: 'listSlice/convertItemChecked',
+            userId: userId,
             subjectIndex: subjectIndex,
-            chapterIndex: chapterIndex
-        });
-        dispatch({
-            type: 'listSlice/setSubjectProgressPercent',
-            subjectIndex: subjectIndex
+            chapterIndex: chapterIndex,
+            itemIndex: itemIndex
         })
+        dispatchProgressPercent(subjectIndex, chapterIndex);
     }
     return (
         <div>

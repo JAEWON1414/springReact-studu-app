@@ -18,12 +18,12 @@ public class SubjectService {
         this.subjectRepository = subjectRepository;
     }
 
-    public boolean join(String userId, String name) {
+    public boolean join(String userId, String name, Long priority) {
         Optional<Subject> optionalSubject = subjectRepository.findByNameAndUserId(name, userId);
         if (optionalSubject.isPresent()) {
             return false;
         }
-        Subject subject = new Subject(userId, name);
+        Subject subject = new Subject(userId, name, priority);
         subjectRepository.save(subject);
         return true;
     }
@@ -44,5 +44,9 @@ public class SubjectService {
 
     public void update(SubjectEditDTO subjectEditDTO){
         subjectRepository.update(subjectEditDTO.getUserId(), subjectEditDTO.getName(), subjectEditDTO.getNewName());
+    }
+    public void updatePriority(Subject subject){
+        System.out.println("!!!! userId = "+subject.getUserId()+" name = "+subject.getUserId()+" priority = "+subject.getPriority());
+        subjectRepository.updatePriority(subject.getUserId(), subject.getName(), subject.getPriority());
     }
 }

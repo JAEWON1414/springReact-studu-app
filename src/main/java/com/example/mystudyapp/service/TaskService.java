@@ -31,4 +31,7 @@ public class TaskService {
     public void updateName(TaskEditDTO taskEditDTO){
         taskRepository.updateName(taskEditDTO.getUserId(), taskEditDTO.getSubjectName(), taskEditDTO.getTaskName(), taskEditDTO.getNewName());
     }
+    public void updateCheck(Task task){
+        taskRepository.updateCheck(task.getUserId(), task.getSubjectName(), task.getTaskName(), task.isChecked());
+    }
 }

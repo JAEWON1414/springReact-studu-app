@@ -43,4 +43,10 @@ public class TaskController {
         taskService.updateName(taskEditDTO);
         return true;
     }
+    @ResponseBody
+    @PostMapping("updateCheck")
+    public boolean update(@RequestBody final Task task){
+        taskService.updateCheck(task);
+        return true;
+    }
 }

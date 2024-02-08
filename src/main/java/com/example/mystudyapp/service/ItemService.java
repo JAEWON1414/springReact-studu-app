@@ -30,6 +30,9 @@ public class ItemService {
     public int updateChecked(String userId, String subjectName, String chapterName, String itemName, boolean checked) {
         return itemRepository.updateChecked(userId, subjectName, chapterName, itemName, checked);
     }
+    public void updateCheckByChapterName(String userId, String subjectName, String chapterName, boolean checked){
+        itemRepository.updateCheckByChapterName(userId,subjectName,chapterName,checked);
+    }
 
     public int delete(String userId, String subjectName, String chapterName, String itemName) {
         return itemRepository.delete(userId, subjectName, chapterName, itemName);

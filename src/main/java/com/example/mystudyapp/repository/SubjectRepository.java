@@ -32,4 +32,9 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
     @Modifying
     @Query("UPDATE Subject s set s.name=:newName WHERE s.userId=:userId and s.name=:name")
     void update(String userId, String name, String newName);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Subject s set s.priority=:priority WHERE s.userId=:userId and s.name=:name")
+    void updatePriority(String userId, String name, Long priority);
 }

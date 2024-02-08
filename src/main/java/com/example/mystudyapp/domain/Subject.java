@@ -14,13 +14,20 @@ public class Subject {
 
     @Column
     private String name;
+    @Column
+    private Long priority;
+
+    public Long getPriority() {
+        return priority;
+    }
 
     public Subject() {
     }
 
-    public Subject(String userId, String name) {
+    public Subject(String userId, String name, Long priority) {
         this.userId = userId;
         this.name = name;
+        this.priority = priority;
     }
 
     public long getIdx() {

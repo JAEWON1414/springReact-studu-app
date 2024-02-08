@@ -15,9 +15,10 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE Chapter c SET c.checked=:checked " +
+    @Query("UPDATE Chapter c SET c.chapterPercent =:chapterPercent " +
             "WHERE c.userId=:userId and c.subjectName=:subjectName and c.chapterName=:chapterName")
-    int updateChecked(String userId, String subjectName, String chapterName, boolean checked);
+    int updateChecked(String userId, String subjectName, String chapterName, Integer chapterPercent);
+
 
     @Transactional
     @Modifying

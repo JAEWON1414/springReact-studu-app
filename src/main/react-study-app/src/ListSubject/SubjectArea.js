@@ -230,7 +230,7 @@ function Chapter({ subjectIndex, chapterIndex, userId }) {
                 <ProgressContainer>
                     <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", width: "170px" }}>
                         <ProgressLeft>
-                            <SubjectCheckbox onClick={() => onClickChapterChecked(chapterIndex)}>{chapter.progressPercent === 100 ? <MdOutlineCheckBox size="24" /> : <MdCheckBoxOutlineBlank size="24" />}</SubjectCheckbox>
+                            <SubjectCheckbox onClick={() => onClickChapterChecked(chapterIndex)}>{chapter.chapterPercent === 100 ? <MdOutlineCheckBox size="24" /> : <MdCheckBoxOutlineBlank size="24" />}</SubjectCheckbox>
                             {!isOpenEdit[chapterIndex]
                                 ? <div style={{ position: "relative", top: "-3px", height: "100%", fontSize: "16px" }}>{chapter.chapterName}</div>
                                 : <form onSubmit={(event) => onSubmitEdit(event, chapterIndex)}>
@@ -242,8 +242,8 @@ function Chapter({ subjectIndex, chapterIndex, userId }) {
                         </ProgressLeft>
                     </div>
                     <ProgressRight>
-                        <ProgressBar><Progress $width={chapter.progressPercent}></Progress></ProgressBar>
-                        <div style={{ width: "60px", fontSize: "14px" }}>{chapter.progressPercent}%</div>
+                        <ProgressBar><Progress $width={chapter.chapterPercent}></Progress></ProgressBar>
+                        <div style={{ width: "60px", fontSize: "14px" }}>{chapter.chapterPercent}%</div>
                         <SubjectToggle onClick={() => onClickShowingItems(chapterIndex)}>{chapter.showingItems ? <IoIosArrowDropleft size="22" /> : <IoIosArrowDropdown size="22" />}</SubjectToggle>
                         <EditBtn onClick={(e) => onClickEdit(e, chapterIndex)} ><FiEdit size="20" /></EditBtn>
                         <SubjectDelete onClick={() => onClickDeleteChapter(chapterIndex)} style={{ position: "relative", top: "-2px", display: "flex", justifyContent: "start", flexDirection: "column" }}><TiDeleteOutline size="24" /></SubjectDelete>

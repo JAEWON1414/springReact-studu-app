@@ -113,12 +113,17 @@ function TaskArea({ subjectIndex, userId }) {
             type: 'listSlice/setSubjectTaskPercent',
             subjectIndex: subjectIndex
         })
+        //정렬
+        dispatch({
+            type: 'listSlice/sortTask',
+            subjectIndex:subjectIndex
+        })
         setTaskInput("");
     }
     const onClickTaskChecked = (taskIndex) => {
         dispatch({
-            //db연결해야함.
-            type: 'listSlice/convertTask',
+            type: 'listSlice/convertTaskChecked',
+            userId:userId,
             subjectIndex: subjectIndex,
             taskIndex: taskIndex
         })
@@ -129,7 +134,7 @@ function TaskArea({ subjectIndex, userId }) {
     }
     const onClickDeleteTask = (taskIndex) => {
         dispatch({
-            type: 'listSlice/delteTask',
+            type: 'listSlice/deleteTask',
             userId: userId,
             subjectIndex: subjectIndex,
             taskIndex: taskIndex

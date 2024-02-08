@@ -20,16 +20,20 @@ public class Chapter {
     private String chapterName;
 
     @Column
-    private boolean checked;
+    private Integer chapterPercent;
+
+    public Integer getChapterPercent() {
+        return chapterPercent;
+    }
 
     public Chapter() {
     }
 
-    public Chapter(String userId, String subjectName, String chapterName, boolean checked) {
+    public Chapter(String userId, String subjectName, String chapterName, Integer chapterPercent) {
         this.userId = userId;
         this.subjectName = subjectName;
         this.chapterName = chapterName;
-        this.checked = checked;
+        this.chapterPercent = chapterPercent;
     }
 
     public long getIdx() {
@@ -46,9 +50,5 @@ public class Chapter {
 
     public String getChapterName() {
         return chapterName;
-    }
-
-    public boolean isChecked() {
-        return checked;
     }
 }

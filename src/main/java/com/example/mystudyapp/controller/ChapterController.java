@@ -25,13 +25,13 @@ public class ChapterController {
     @ResponseBody
     @PostMapping("create")
     public boolean create(@RequestBody final Chapter chapter) {
-        return chapterService.join(chapter.getUserId(), chapter.getSubjectName(), chapter.getChapterName());
+        return chapterService.join(chapter.getUserId(), chapter.getSubjectName(), chapter.getChapterName(), chapter.getChapterPercent());
     }
 
     @ResponseBody
     @PostMapping("updateCheck")
     public int update(@RequestBody final Chapter chapter) {
-        return chapterService.updateChecked(chapter.getUserId(), chapter.getSubjectName(), chapter.getChapterName(), chapter.isChecked());
+        return chapterService.updateChecked(chapter.getUserId(), chapter.getSubjectName(), chapter.getChapterName(), chapter.getChapterPercent());
     }
 
     @ResponseBody

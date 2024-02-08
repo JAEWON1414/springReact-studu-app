@@ -19,8 +19,8 @@ public class ChapterService {
         this.chapterRepository = chapterRepository;
     }
 
-    public boolean join(String userId, String subjectName, String chapterName) {
-        Chapter chapter = new Chapter(userId, subjectName, chapterName, false);
+    public boolean join(String userId, String subjectName, String chapterName, Integer chapterPercent) {
+        Chapter chapter = new Chapter(userId, subjectName, chapterName, chapterPercent);
         chapterRepository.save(chapter);
         return true;
     }
@@ -29,8 +29,8 @@ public class ChapterService {
         return chapterRepository.findByUserIdAndSubjectName(userId, subjectName);
     }
 
-    public int updateChecked(String userId, String subjectName, String chapterName, boolean checked) {
-        return chapterRepository.updateChecked(userId, subjectName, chapterName, checked);
+    public int updateChecked(String userId, String subjectName, String chapterName, Integer chapterPercent) {
+        return chapterRepository.updateChecked(userId, subjectName, chapterName, chapterPercent);
     }
 
     public int delete(String userId, String subjectName, String chapterName) {

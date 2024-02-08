@@ -4,6 +4,8 @@ import { TiDeleteOutline } from "react-icons/ti";
 import React from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
+import { FaRegStar,FaStar } from "react-icons/fa";
+
 const SubjectName = styled.div`
     background-color:inherit;
     color:${({ theme }) => theme.color.black};
@@ -134,6 +136,17 @@ function OverviewArea({ showingIndex, changeShowingIndex, userId }) {
         updatedEditInput[index] = value;
         setEditInput(updatedEditInput);
     }
+    const onClickBookMark = (e,subjectIndex) => {
+        e.stopPropagation();
+        dispatch({
+            type:'listSlice/changePriority',
+            userId:userId,
+            subjectIndex:subjectIndex
+        });
+        dispatch({
+            type:'listSlice/sortByPriority'
+        })
+    }
     React.useEffect(() => {
         const handleClickOutside = (event) => {
             if (event.target.className !== 'edit-input') {
@@ -157,7 +170,6 @@ function OverviewArea({ showingIndex, changeShowingIndex, userId }) {
         <AreaOverview>
             {subjects.map((subject, index) => (
                 (<li key={index}>
-
                     <SubjectContainer onClick={() => onClickShowing(index)}>
                         <SubjectHeader>
                             {!isOpenEdit[index] ? <SubjectName>{subject.subjectName}</SubjectName>
@@ -168,6 +180,8 @@ function OverviewArea({ showingIndex, changeShowingIndex, userId }) {
                                         onClick={(event) => event.stopPropagation()} />
                                 </form>}
                             <span>
+                                <button onClick={(e)=>onClickBookMark(e,index)} style={{backgroundColor:'inherit', border:"none"}}>
+                                    {subject.priority < 0 ? <div ><FaStar size="20" color="red"/></div> : <div><FaRegStar size="20"/></div>}</button>
                                 <SubjectEdit onClick={(e) => onClickEdit(e, index)} style={{ marginRight: "5px" }}> <FiEdit size="20" /> </SubjectEdit>
                                 <SubjectDelete onClick={(e) => onClickDeleteSubject(e, index)} ><TiDeleteOutline size="24" /></SubjectDelete>
                             </span>
@@ -181,7 +195,7 @@ function OverviewArea({ showingIndex, changeShowingIndex, userId }) {
                             <ProgressLeft>과제</ProgressLeft>
                             <ProgressBar><Progress $width={subject.taskPercent} /></ProgressBar>
                             {/* <ProgressRight>{list.countTask(index) !== 0 ? list.countCheckedTask(index) + "개/" + list.countTask(index) + "개" : "과제없음"}</ProgressRight> */}
-                            <ProgressRight>0개/0개</ProgressRight>
+                            <ProgressRight>{subject.checkedTasks}개/{subject.tasks.length}개</ProgressRight>
                         </ProgressContainer>
                     </SubjectContainer>
                 </li>)

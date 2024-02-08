@@ -19,4 +19,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Modifying
     @Query("UPDATE Task t set t.taskName=:newName WHERE t.userId=:userId AND t.subjectName=:subjectName AND t.taskName=:taskName")
     void updateName(String userId, String subjectName, String taskName, String newName);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Task t set t.checked=:checked WHERE t.userId=:userId and t.subjectName=:subjectName and taskName=:taskName")
+    void updateCheck(String userId, String subjectName, String taskName, boolean checked);
 }

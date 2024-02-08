@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useDispatch } from 'react-redux';
 
+
 const GlobalStyle = createGlobalStyle`
   *{
     font-family: "kim-jung-chul-myungjo", sans-serif
@@ -219,7 +220,9 @@ function MainPage() {
         dispatch({
           type: 'listSlice/fetchSubjects',
           subjectName: subject.name,
+          priority: subject.priority,
         });
+        
         const chaptersResponse = await axios.post('/api/chapters', {
           userId: userId,
           subjectName: subject.name,
@@ -231,7 +234,7 @@ function MainPage() {
             type: 'listSlice/fetchChapters',
             chapterName: chapter.chapterName,
             subjectIndex: subjectIndex,
-            checked: chapter.checked
+            chapterPercent: chapter.chapterPercent
           })
           const itemResponse = await axios.post('/api/items', {
             userId: userId,
@@ -280,9 +283,12 @@ function MainPage() {
           type: 'listSlice/setSubjectTaskPercent',
           subjectIndex: subjectIndex
         })
-        setLoading(false);
-      }
 
+      }
+      dispatch({
+        type: 'listSlice/sortByPriority'
+      })
+      setLoading(false);
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -316,10 +322,7 @@ function MainPage() {
               {pageID === "4" ? <Calendar /> : null}
               {pageID === "5" ? <Blog /> : null}
             </div>}
-          {/* {pageID === "1" ? <ListSubject userId={userId} /> : null}
-          {pageID === "3" ? <Timetable /> : null}
-          {pageID === "4" ? <Calendar /> : null}
-          {pageID === "5" ? <Blog /> : null} */}
+
         </div>
       </Entire>
     </ThemeProvider>

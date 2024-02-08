@@ -41,6 +41,12 @@ public class ItemController {
         System.out.println("updateCheck item = " + item.getUserId() + " " + item.getSubjectName() + " " + item.getChapterName() + " " + item.getItemName() + " " + item.isChecked());
         return itemService.updateChecked(item.getUserId(), item.getSubjectName(), item.getChapterName(), item.getItemName(), item.isChecked());
     }
+    @ResponseBody
+    @PostMapping("updateCheckByChapterName")
+    public int updateCheckByChapterName(@RequestBody final Item item){
+        itemService.updateCheckByChapterName(item.getUserId(), item.getSubjectName(), item.getChapterName(), item.isChecked());
+        return 1;
+    }
 
     @ResponseBody
     @PostMapping("delete")

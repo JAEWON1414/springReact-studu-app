@@ -23,7 +23,7 @@ public class SubjectController {
     @ResponseBody
     @PostMapping("create")
     public boolean create(@RequestBody final Subject subject) {
-        return subjectService.join(subject.getUserId(), subject.getName());
+        return subjectService.join(subject.getUserId(), subject.getName(), subject.getPriority());
     }
 
     @ResponseBody
@@ -45,4 +45,8 @@ public class SubjectController {
         subjectService.update(subjectEditDTO);
     }
 
+    @ResponseBody
+    @PostMapping("updatePriority")
+    public void updateBookmark(@RequestBody final Subject subject){
+        subjectService.updatePriority(subject);}
 }

@@ -20,6 +20,10 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "WHERE i.userId=:userId and i.subjectName=:subjectName and i.chapterName=:chapterName and i.itemName=:itemName")
     int updateChecked(String userId, String subjectName, String chapterName, String itemName, boolean checked);
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE Item i SET i.checked =:checked WHERE i.userId=:userId and i.subjectName=:subjectName and i.chapterName=:chapterName")
+    void updateCheckByChapterName(String userId, String subjectName, String chapterName, boolean checked);
 
     @Transactional
     @Modifying

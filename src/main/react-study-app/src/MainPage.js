@@ -109,13 +109,13 @@ const ProfileContainer = styled.div`
   flex-direction: row;
   justify-content: center;
   width:150px;
-  margin-top:15px;
+  margin-top:10px;
   margin-right:30px;
 `;
 
 const Login = styled.button`
   border:none;
-  font-size:10px;
+  font-size:13px;
   background-color:rgb(240,239,255);
 `;
 const SignUp = styled.button`

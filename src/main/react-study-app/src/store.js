@@ -305,7 +305,6 @@ const listSlice = createSlice({
             }
         },
         sortTask : (state, action)=>{
-            console.log("ok")
             const tasks = state.subjects[action.subjectIndex].tasks;
             for (let i = tasks.length - 1; i > 0; i--) {
                 for (let j = 0; j < i; j++) {

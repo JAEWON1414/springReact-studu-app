@@ -33,7 +33,7 @@ export const UserContainer = styled.div`
     flex-direction:column;
     background-color:rgb(195,194,213);
     border-radius:5%;
-    width:270px;
+    width:300px;
     height:350px;
     padding:0px 50px;
 `;
@@ -84,7 +84,8 @@ const LoginLink = styled(Link)`
     color: rgb(56,55,67);
     font-size:10px;
     margin-bottom:20px;
-    white-space: pre-wrap;
+    // white-space: pre-wrap;
+    // width:200px;
 `;
 
 
@@ -115,7 +116,7 @@ function LoginPage() {
 
     return (
         <UserBodyWrapper>
-            <Logo onClick={()=>navigate('/')}>로고</Logo>
+            <Logo onClick={() => navigate('/')}>로고</Logo>
             <UserContainerWrapper>
                 <UserContainer>
                     <div></div>
@@ -126,11 +127,11 @@ function LoginPage() {
                     </UserForm>
                     <Hr />
                     <LoginFooter>
-                        <LoginLink to={`/findId`}>아이디 찾기{"\u00A0"}{"\u00A0"}{"\u00A0"}{"\u00A0"}{"\u00A0"}{"\u00A0"}•</LoginLink>
-                       
-                        <LoginLink to={`/finrPw`}>비밀번호 찾기{"\u00A0"}{"\u00A0"}{"\u00A0"}{"\u00A0"}{"\u00A0"}{"\u00A0"}•</LoginLink>
-                       
-                        <LoginLink to={`/SignUp`}>회원가입</LoginLink>
+                        <LoginLink to={`/findId`}>아이디 찾기{"\u00A0"}{"\u00A0"}•</LoginLink>
+
+                        <LoginLink to={`/findPw`}>{"\u00A0"}{"\u00A0"}비밀번호 찾기{"\u00A0"}{"\u00A0"}•</LoginLink>
+
+                        <LoginLink to={`/SignUp`}>{"\u00A0"}{"\u00A0"}회원가입</LoginLink>
                     </LoginFooter>
                 </UserContainer>
             </UserContainerWrapper>

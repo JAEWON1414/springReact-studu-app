@@ -89,7 +89,7 @@ const ProgressRight = styled.div`
 
 const EditInput = styled.input`
     background-color:inherit;
-    width:180px;
+    width:120px;
     border:hidden;
     outline:none;
     font-size:19px;
@@ -181,7 +181,7 @@ function OverviewArea({ showingIndex, changeShowingIndex, userId }) {
                                 </form>}
                             <span>
                                 <button onClick={(e)=>onClickBookMark(e,index)} style={{backgroundColor:'inherit', border:"none"}}>
-                                    {subject.priority < 0 ? <div ><FaStar size="20" color="red"/></div> : <div><FaRegStar size="20"/></div>}</button>
+                                    {subject.priority < 0 ? <div ><FaStar size="20"/></div> : <div><FaRegStar size="20"/></div>}</button>
                                 <SubjectEdit onClick={(e) => onClickEdit(e, index)} style={{ marginRight: "5px" }}> <FiEdit size="20" /> </SubjectEdit>
                                 <SubjectDelete onClick={(e) => onClickDeleteSubject(e, index)} ><TiDeleteOutline size="24" /></SubjectDelete>
                             </span>

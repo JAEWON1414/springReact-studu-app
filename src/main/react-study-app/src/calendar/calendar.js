@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { format, addMonths, subMonths } from 'date-fns';
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
-import { isSameMonth, isSameDay, addDays, parse } from 'date-fns';
+import { isSameMonth, isSameDay, addDays } from 'date-fns';
 // import { Icon } from '@iconify/react';
 import './Calendar.css';
 
@@ -134,8 +134,9 @@ const RenderCells = ({currentMonth, selectedDate, onDateClick, todos}) => {
 
 //todo 등록 + 표시부
 //todos에 모든 일정 저장. 저장 형식은 {[날짜] : [value1, value2, ...], [날짜2] : [value1, ...]}
-const RenderTodos = ({todos, onTodoChange, currentDate}) => {
+const RenderTodos = ({todos, onTodoChange, currentDate, setTodos}) => {
     const [newTodo, setNewTodo] = useState("");
+    const [isEditable, setEditable] = useState(false);
     const onChange = (event) => {
         setNewTodo(event.target.value);
     }
@@ -147,8 +148,19 @@ const RenderTodos = ({todos, onTodoChange, currentDate}) => {
         setNewTodo("");
         onTodoChange(currentDate, newTodo);
     }
+    const onDeleteButton = (targetID) => {
+        if (!todos[currentDate]) return;
+        const newTodos = { ...todos };
+        const filteredArray = newTodos[currentDate].filter((_, index) => index !== targetID);
+        newTodos[currentDate] = filteredArray;
+        setTodos(newTodos);
+    }
+    const onEditButton = () => {
+        setEditable(!isEditable);
+    }
     return (
         <div>
+
             {/* todo 입력칸 */}
             <div className="inputTodos" > 
                 <form onSubmit={onSubmit}>
@@ -157,17 +169,39 @@ const RenderTodos = ({todos, onTodoChange, currentDate}) => {
                 </form>
             </div>
 
-            {/* 입력된 todo 표시칸 */}
+
+            {/* 입력된 todo 표시부 */}
             <div className='todoList'>
                 {todos[currentDate] && (
                 <ul>
                     {todos[currentDate].map((todo, index) => (
-                    <li key={index}>{todo}</li>
+                        <div key={index}>
+                            <span>{todo}</span>
+                            <button onClick={() => {onDeleteButton(index)}}>Delete</button>
+                            <button onClick={onEditButton}>Edit</button>
+                        </div>
                     ))}
                 </ul>
                 )}
             </div>
 
+        </div>
+    );
+}
+
+const RednerEditBar = () => {
+    return (
+        <span>Edit here</span>
+    );
+}
+
+const RednerSubject = () => {
+    const onClickAdd = () => {
+        
+    }
+    return (
+        <div>
+            <button onClick={onClickAdd}>과목명에서 추가하기</button>
         </div>
     );
 }
@@ -218,11 +252,14 @@ const Calendar = () => {
                     onDateClick={onDateClick} 
                     todos={todos} />
             </div>
-            <div className='todos'>
+            <div className='todos' style={{display : 'flex'}}>
                 <RenderTodos 
                     todos = {todos}
                     onTodoChange = {onTodoChange} 
-                    currentDate={selectedDate} />
+                    currentDate={selectedDate} 
+                    setTodos = {setTodos}/>
+                <RednerEditBar/>
+                <RednerSubject/>
             </div>
         </div>
     );

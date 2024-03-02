@@ -1,0 +1,96 @@
+.blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: purple;
+}
+
+/*.left-content {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.left-content img {*/
+/*    width: 50px; !* 이미지에 맞게 조절 *!*/
+/*    height: auto;*/
+/*    margin-right: 10px; !* 이미지와 텍스트 사이의 간격 조절 *!*/
+/*}*/
+
+.menu {
+    display: flex;
+}
+
+.menu-item {
+    margin-right: 20vh; /* 메뉴 아이템 간의 간격 조절 */
+}
+
+.blog-main {
+    margin: 20px 0;
+    padding: 0 20px;
+}
+
+.blog-footer {
+    background: #333;
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+/* 기존 스타일 유지 */
+
+.content-container {
+    display: flex;
+}
+
+.blog-main {
+    flex: 1; /* 메인 콘텐츠가 가능한 많은 공간을 차지하도록 함 */
+    padding: 20px;
+}
+
+.blog-sidebar {
+    width: 300px; /* 사이드바의 너비 고정 */
+    padding: 20px;
+    background-color: #f4f4f4; /* 사이드바의 배경색 */
+}
+
+.article-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* 모달을 다른 요소들 위에 표시 */
+}
+
+.image-gallery img {
+    width: 100px; /* 이미지 크기 조정 */
+    height: 100px; /* 이미지 크기 조정 */
+    object-fit: cover; /* 이미지 비율 유지 */
+}
+
+/* 기존 스타일은 유지하면서 추가 */
+.image-gallery {
+    display: flex; /* Flexbox 레이아웃 사용 */
+    flex-wrap: wrap; /* 내용이 넘치면 다음 줄로 이동 */
+    gap: 10px; /* 이미지 사이의 간격 */
+}
+
+.image-gallery div {
+    flex: 1; /* 각 이미지 항목이 유연하게 늘어나도록 설정 */
+    min-width: calc(33.333% - 10px); /* 각 이미지 항목의 최소 너비 설정, 3개의 이미지가 한 줄에 표시됨 */
+    cursor: pointer; /* 마우스 오버 시 포인터 모양으로 변경 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.image-gallery img {
+    width: 100%; /* 이미지 너비를 부모 요소에 맞춤 */
+    height: auto; /* 이미지의 원래 비율을 유지 */
+}
+
+
+
+/* 기존 .blog-footer 스타일 유지 */
+
